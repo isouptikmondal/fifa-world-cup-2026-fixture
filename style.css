@@ -752,7 +752,7 @@ body {
 }
 
 .bracket-right {
-    flex-direction: row-reverse;
+    flex-direction: row;
 }
 
 .bracket-round {
