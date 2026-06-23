@@ -1118,7 +1118,7 @@ body {
     .app-header {
         flex-direction: column;
         gap: 1rem;
-        padding: 1rem;
+        padding: 1rem 2rem;
     }
     
     .global-controls {
@@ -1133,5 +1133,173 @@ body {
     
     .action-buttons {
         justify-content: center;
+    }
+}
+
+@media (max-width: 768px) {
+    /* Main Workspace Optimization */
+    .app-workspace {
+        padding: 1rem 0.75rem;
+    }
+
+    .view-header {
+        margin-bottom: 1.25rem;
+        text-align: center;
+    }
+
+    .view-header h2 {
+        font-size: 1.5rem;
+    }
+
+    .view-header p {
+        font-size: 0.85rem;
+    }
+
+    /* Header Compact Stack */
+    .app-header {
+        padding: 1rem;
+    }
+
+    .logo-area {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 0.5rem;
+        width: 100%;
+    }
+
+    .live-status-container {
+        margin-left: 0;
+        margin-top: 0.25rem;
+        padding: 0.25rem 0.6rem;
+    }
+
+    /* Actions Grid Layout */
+    .global-controls {
+        gap: 1rem;
+    }
+
+    .action-buttons {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+        width: 100%;
+    }
+
+    #btn-sync-live {
+        grid-column: span 2;
+    }
+
+    .action-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 0.5rem;
+        font-size: 0.8rem;
+    }
+
+    /* Group Stage Cards Optimization */
+    .group-grid {
+        grid-template-columns: 1fr; /* Force 1 column */
+        gap: 1.25rem;
+    }
+
+    .group-card {
+        padding: 1rem;
+    }
+
+    .group-card-header h3 {
+        font-size: 1.15rem;
+    }
+
+    .team-row {
+        height: 42px;
+    }
+
+    .team-name {
+        font-size: 0.85rem;
+        max-width: 160px; /* Wider text bounds on full-width mobile rows */
+    }
+
+    .group-match-team-name {
+        font-size: 0.8rem;
+        max-width: 100px;
+    }
+
+    .points-val, .num-val {
+        font-size: 0.85rem;
+    }
+
+    /* Bracket Vertical Compression */
+    .bracket-round {
+        height: 700px; /* Compresses matching card gaps vertically */
+    }
+
+    .match-card {
+        max-width: 140px;
+        padding: 0.35rem;
+    }
+
+    .match-team {
+        padding: 0.25rem 0.4rem;
+    }
+
+    .match-team-name {
+        font-size: 0.75rem;
+        max-width: 75px;
+    }
+
+    .match-team-score {
+        font-size: 0.8rem;
+    }
+
+    .round-title {
+        font-size: 0.65rem;
+        letter-spacing: 1px;
+        top: -2rem;
+    }
+
+    /* Trophy and Center Column Scaling */
+    .bracket-center {
+        gap: 2rem;
+    }
+
+    .trophy-display {
+        padding: 1rem;
+    }
+
+    .trophy-glow {
+        font-size: 3rem;
+    }
+
+    .champion-announcement h3 {
+        font-size: 0.7rem;
+    }
+
+    .winner-hero-card {
+        padding: 0.5rem 0.85rem;
+    }
+
+    .winner-hero-card .hero-name {
+        font-size: 0.9rem;
+    }
+
+    .winner-hero-card .flag-img {
+        width: 22px;
+        height: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Extra narrow screens padding tweaks */
+    .app-workspace {
+        padding: 0.75rem 0.5rem;
+    }
+
+    .team-name {
+        max-width: 120px;
+    }
+    
+    .group-match-team-name {
+        max-width: 75px;
     }
 }
