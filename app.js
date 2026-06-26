@@ -75,15 +75,37 @@ const TEAMS = [
     { id: 'PAN', apiId: 48, name: 'Panama', group: 'L', flag: 'pa', rating: 76 }
 ];
 
+// Stadium Database (16 host stadiums in US, Canada, Mexico)
+const STADIUMS = {
+    1: { name: 'Estadio Azteca (Mexico City)', offset: -5 },
+    2: { name: 'BMO Field (Toronto)', offset: -4 },
+    3: { name: 'Estadio Monterrey (Monterrey)', offset: -5 },
+    4: { name: 'AT&T Stadium (Dallas)', offset: -5 },
+    5: { name: 'SoFi Stadium (Los Angeles)', offset: -7 },
+    6: { name: 'Hard Rock Stadium (Miami)', offset: -4 },
+    7: { name: 'Lincoln Financial Field (Philadelphia)', offset: -4 },
+    8: { name: 'Arrowhead Stadium (Kansas City)', offset: -5 },
+    9: { name: 'Gillette Stadium (Boston)', offset: -4 },
+    10: { name: 'Mercedes-Benz Stadium (Atlanta)', offset: -4 },
+    11: { name: 'MetLife Stadium (New York/NJ)', offset: -4 },
+    12: { name: 'Lumen Field (Seattle)', offset: -7 },
+    13: { name: 'BC Place (Vancouver)', offset: -7 },
+    14: { name: 'Levi\'s Stadium (San Francisco)', offset: -7 },
+    15: { name: 'Estadio Akron (Guadalajara)', offset: -5 },
+    16: { name: 'NRG Stadium (Houston)', offset: -5 }
+};
+
 const GROUPS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'];
 
 // State object
 let state = {
-    groupMatches: [],   // Array of 72 group stage matches: { id, homeTeam, awayTeam, score1, score2, finished, group }
+    groupMatches: [],   // Array of 72 group stage matches
     groupStandings: {}, // Map of Group letter -> Array of team objects (sorted 1 to 4)
     wildcards: [],      // Array of 8 qualified third place team objects
-    knockouts: {},      // Map of Match ID -> match state { team1, team2, winner, loser, score1, score2 }
-    activeTabs: {}      // Map of Group letter -> 'standings' | 'matches'
+    knockouts: {},      // Map of Match ID -> match state
+    activeTabs: {},      // Map of Group letter -> 'standings' | 'matches'
+    activeFixtureFilter: 'all', // 'all' | 'group' | 'knockout' | 'live'
+    matchSchedules: {}   // Map of Match ID -> { localDate, stadiumId }
 };
 
 // Knockout Match Configurations
@@ -138,10 +160,11 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function initApp() {
-    // 1. Initialize empty group matches
+    // 1. Initialize empty group matches & default schedules
     initGroupMatches();
+    initDefaultSchedules();
     
-    // 2. Initialize default knockout structures
+    // 2. Initialize default layout states
     GROUPS.forEach(g => {
         state.activeTabs[g] = 'standings';
     });
@@ -159,7 +182,7 @@ function initApp() {
         };
     });
 
-    // 3. Load from local prediction storage
+    // 3. Load from local prediction cache
     const savedState = localStorage.getItem('wc_2026_predictor_state');
     if (savedState) {
         try {
@@ -169,15 +192,17 @@ function initApp() {
                 state.knockouts = parsed.knockouts;
             }
         } catch (e) {
-            console.error("Failed to parse prediction cache. Reverting.", e);
+            console.error("Failed to parse prediction cache.", e);
         }
     }
 
-    // 4. Load Live API Data (Stale-While-Revalidate pattern)
+    // 4. Load Live API Data (Stale-While-Revalidate)
     const liveCache = localStorage.getItem('wc_2026_live_cache');
     if (liveCache) {
         try {
-            mergeLiveData(JSON.parse(liveCache));
+            const parsedGames = JSON.parse(liveCache);
+            mergeLiveData(parsedGames);
+            updateSchedulesFromApi(parsedGames);
             setLiveIndicator('connected', 'Live Cached');
         } catch (e) {
             setLiveIndicator('offline', 'Prediction Mode');
@@ -186,19 +211,17 @@ function initApp() {
         setLiveIndicator('offline', 'Prediction Mode');
     }
 
-    // Trigger background live fetch
+    // Background live fetch
     fetchLiveTournamentData();
 
     // 5. Build state and render
     recalculateAllGroups();
     calculateWildcards();
     populateRound32();
-    renderGroupStage();
-    renderKnockoutBracket();
-    checkChampion();
+    propagateKnockouts();
+    updateAllViews();
 }
 
-// Generate the 72 group stage matches sequentially
 function initGroupMatches() {
     state.groupMatches = [];
     let matchId = 1;
@@ -206,7 +229,6 @@ function initGroupMatches() {
     GROUPS.forEach(gLetter => {
         const groupTeams = TEAMS.filter(t => t.group === gLetter);
         
-        // Matchups structure
         const pairings = [
             { home: groupTeams[0], away: groupTeams[1] },
             { home: groupTeams[2], away: groupTeams[3] },
@@ -230,6 +252,88 @@ function initGroupMatches() {
     });
 }
 
+// Generate realistic default dates and stadium IDs for unplayed games
+function initDefaultSchedules() {
+    state.matchSchedules = {};
+    for (let id = 1; id <= 104; id++) {
+        let localDate = '';
+        let stadiumId = String((id % 16) + 1);
+        
+        if (id <= 72) {
+            const dayOffset = Math.floor((id - 1) / 5);
+            localDate = `06/${11 + dayOffset}/2026 15:00`;
+        } else {
+            const dayOffset = Math.floor((id - 73) / 3);
+            localDate = `06/${28 + dayOffset}/2026 17:00`;
+        }
+        
+        state.matchSchedules[id] = { localDate, stadiumId };
+    }
+}
+
+function updateSchedulesFromApi(gamesArray) {
+    gamesArray.forEach(game => {
+        const mId = parseInt(game.id);
+        if (mId && game.local_date && game.stadium_id) {
+            state.matchSchedules[mId] = {
+                localDate: game.local_date,
+                stadiumId: game.stadium_id
+            };
+        }
+    });
+}
+
+// IST conversion helper
+function getISTDate(localDateStr, stadiumId) {
+    if (!localDateStr) return 'TBD';
+    
+    try {
+        const parts = localDateStr.split(' ');
+        const dateParts = parts[0].split('/');
+        const timeParts = parts[1].split(':');
+        
+        const month = parseInt(dateParts[0]) - 1;
+        const day = parseInt(dateParts[1]);
+        const year = parseInt(dateParts[2]);
+        const hour = parseInt(timeParts[0]);
+        const minute = parseInt(timeParts[1]);
+        
+        const localTimeMs = Date.UTC(year, month, day, hour, minute);
+        
+        const stadium = STADIUMS[parseInt(stadiumId)] || { offset: -5 };
+        const offsetHours = stadium.offset;
+        
+        const utcTimeMs = localTimeMs - (offsetHours * 60 * 60 * 1000);
+        const istTimeMs = utcTimeMs + (5.5 * 60 * 60 * 1000);
+        
+        const istDate = new Date(istTimeMs);
+        
+        const dayVal = istDate.getUTCDate();
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const monthVal = months[istDate.getUTCMonth()];
+        const yearVal = istDate.getUTCFullYear();
+        
+        const hrVal = String(istDate.getUTCHours()).padStart(2, '0');
+        const minVal = String(istDate.getUTCMinutes()).padStart(2, '0');
+        
+        return `${dayVal} ${monthVal} ${yearVal} • ${hrVal}:${minVal} IST`;
+    } catch (e) {
+        return localDateStr + ' IST';
+    }
+}
+
+function getKnockoutPlaceholder(matchId, isTeam1) {
+    const config = MATCH_CONFIGS[matchId];
+    if (!config) return 'TBD';
+    const src = isTeam1 ? config.team1Src : config.team2Src;
+    if (src.type === 'group-winner') return `Winner Gr. ${src.group}`;
+    if (src.type === 'group-runner-up') return `Runner-up Gr. ${src.group}`;
+    if (src.type === 'wildcard') return `3rd Place wildcard`;
+    if (src.type === 'match-winner') return `Winner Match ${src.matchId}`;
+    if (src.type === 'match-loser') return `Loser Match ${src.matchId}`;
+    return 'TBD';
+}
+
 function setLiveIndicator(status, text) {
     const indicator = document.getElementById('live-indicator');
     const statusText = document.getElementById('live-status-text');
@@ -239,7 +343,7 @@ function setLiveIndicator(status, text) {
     statusText.textContent = text;
 }
 
-// Fetch live scores from Github / API
+// Fetch live scores from API
 async function fetchLiveTournamentData() {
     setLiveIndicator('syncing', 'Syncing Live...');
     try {
@@ -250,21 +354,16 @@ async function fetchLiveTournamentData() {
         if (data && data.games) {
             localStorage.setItem('wc_2026_live_cache', JSON.stringify(data.games));
             mergeLiveData(data.games);
+            updateSchedulesFromApi(data.games);
             setLiveIndicator('connected', 'Live Connected');
             
-            // Re-render
             recalculateAllGroups();
             calculateWildcards();
             populateRound32();
-            renderGroupStage();
-            renderKnockoutBracket();
-            checkChampion();
-        } else {
-            throw new Error('Invalid JSON structure');
+            updateAllViews();
         }
     } catch (e) {
         console.warn("Live API fetch failed. Using cached predictions.", e);
-        // If caching is empty, show prediction status
         const liveCache = localStorage.getItem('wc_2026_live_cache');
         if (liveCache) {
             setLiveIndicator('connected', 'Live (Cached)');
@@ -274,13 +373,11 @@ async function fetchLiveTournamentData() {
     }
 }
 
-// Merge live API match data into local state
 function mergeLiveData(gamesArray) {
     gamesArray.forEach(game => {
         const isFinished = game.finished === 'TRUE';
         
         if (game.type === 'group') {
-            // Find group match
             const homeId = parseInt(game.home_team_id);
             const awayId = parseInt(game.away_team_id);
 
@@ -289,25 +386,20 @@ function mergeLiveData(gamesArray) {
                 (m.homeTeam.apiId === awayId && m.awayTeam.apiId === homeId)
             );
 
-            if (localMatch) {
-                // If the game in API is finished, we lock it with real scores
-                if (isFinished) {
-                    if (localMatch.homeTeam.apiId === homeId) {
-                        localMatch.score1 = parseInt(game.home_score);
-                        localMatch.score2 = parseInt(game.away_score);
-                    } else {
-                        localMatch.score1 = parseInt(game.away_score);
-                        localMatch.score2 = parseInt(game.home_score);
-                    }
-                    localMatch.finished = true;
+            if (localMatch && isFinished) {
+                if (localMatch.homeTeam.apiId === homeId) {
+                    localMatch.score1 = parseInt(game.home_score);
+                    localMatch.score2 = parseInt(game.away_score);
+                } else {
+                    localMatch.score1 = parseInt(game.away_score);
+                    localMatch.score2 = parseInt(game.home_score);
                 }
+                localMatch.finished = true;
             }
         } else {
-            // Knockout match
             const mId = parseInt(game.id);
             const localKnockout = state.knockouts[mId];
             if (localKnockout && isFinished) {
-                // Map team ids to our TEAMS
                 const homeId = parseInt(game.home_team_id);
                 const awayId = parseInt(game.away_team_id);
                 
@@ -350,7 +442,6 @@ function resetToDefault() {
     initApp();
 }
 
-// 2. Standings & Score Calculations
 function recalculateAllGroups() {
     GROUPS.forEach(g => {
         recalculateGroupStandings(g);
@@ -359,8 +450,6 @@ function recalculateAllGroups() {
 
 function recalculateGroupStandings(groupLetter) {
     const groupTeams = TEAMS.filter(t => t.group === groupLetter);
-    
-    // Initialize stats
     const standings = groupTeams.map(t => {
         return { ...t, pts: 0, gd: 0, gf: 0, ga: 0, mp: 0, w: 0, d: 0, l: 0 };
     });
@@ -368,7 +457,6 @@ function recalculateGroupStandings(groupLetter) {
     const matches = state.groupMatches.filter(m => m.group === groupLetter);
 
     matches.forEach(match => {
-        // A match counts if finished OR if user inputted scores for both
         const hasScores = match.score1 !== null && match.score2 !== null;
         
         if (match.finished || hasScores) {
@@ -416,7 +504,7 @@ function recalculateGroupStandings(groupLetter) {
     state.groupStandings[groupLetter] = standings;
 }
 
-// 3. Render Standings & Match Lists in Group Cards
+// 3. Render Group Stage
 function renderGroupStage() {
     const grid = document.getElementById('group-grid-container');
     if (!grid) return;
@@ -427,6 +515,7 @@ function renderGroupStage() {
         groupCard.className = 'group-card glass-panel';
         
         const activeTab = state.activeTabs[gLetter];
+        const teams = state.groupStandings[gLetter];
 
         let html = `
             <div class="group-card-header">
@@ -442,7 +531,6 @@ function renderGroupStage() {
                 </div>
             </div>
             
-            <!-- Table Tab Content -->
             <div class="tab-content ${activeTab === 'standings' ? 'active' : ''}">
                 <table class="group-table">
                     <thead>
@@ -456,8 +544,6 @@ function renderGroupStage() {
                     <tbody>
         `;
 
-        // Render standings rows
-        const teams = state.groupStandings[gLetter];
         teams.forEach((team, idx) => {
             let rowClass = 'team-row';
             if (idx === 0) rowClass += ' qualify-top';
@@ -485,12 +571,10 @@ function renderGroupStage() {
                 </table>
             </div>
 
-            <!-- Matches Tab Content -->
             <div class="tab-content ${activeTab === 'matches' ? 'active' : ''}">
                 <div class="group-matches-list">
         `;
 
-        // Render 6 group stage matches
         const matches = state.groupMatches.filter(m => m.group === gLetter);
         matches.forEach(match => {
             const hVal = match.score1 !== null ? match.score1 : '';
@@ -501,19 +585,19 @@ function renderGroupStage() {
                 <div class="group-match-row">
                     <div class="group-match-team-info home">
                         <span class="group-match-team-name" title="${match.homeTeam.name}">${match.homeTeam.name}</span>
-                        <img class="flag-img" src="https://flagcdn.com/w40/${match.homeTeam.flag}.png" alt="${match.homeTeam.name}">
+                        <img class="flag-img" src="https://flagcdn.com/w40/${match.homeTeam.flag}.png" alt="">
                     </div>
                     
                     <div class="score-inputs-wrapper">
-                        <input type="number" min="0" max="20" class="score-input" value="${hVal}" 
+                        <input type="number" min="0" class="score-input" value="${hVal}" 
                             oninput="updateMatchScore(${match.id}, true, this.value)" ${isLocked ? 'disabled' : ''}>
                         <span class="group-match-vs">:</span>
-                        <input type="number" min="0" max="20" class="score-input" value="${aVal}" 
+                        <input type="number" min="0" class="score-input" value="${aVal}" 
                             oninput="updateMatchScore(${match.id}, false, this.value)" ${isLocked ? 'disabled' : ''}>
                     </div>
 
                     <div class="group-match-team-info away">
-                        <img class="flag-img" src="https://flagcdn.com/w40/${match.awayTeam.flag}.png" alt="${match.awayTeam.name}">
+                        <img class="flag-img" src="https://flagcdn.com/w40/${match.awayTeam.flag}.png" alt="">
                         <span class="group-match-team-name" title="${match.awayTeam.name}">${match.awayTeam.name}</span>
                     </div>
                     ${isLocked ? '<span class="match-status-badge">Live</span>' : ''}
@@ -553,7 +637,7 @@ window.updateMatchScore = function(matchId, isHome, val) {
     propagateGroupChanges();
 };
 
-// 4. Standings Calculation
+// 4. Wildcard Calculation
 function calculateWildcards() {
     const thirdPlaceTeams = [];
     GROUPS.forEach(g => {
@@ -564,7 +648,6 @@ function calculateWildcards() {
         });
     });
 
-    // Sort: 1) Points, 2) GD, 3) GF, 4) Rating
     thirdPlaceTeams.sort((a, b) => {
         if (b.pts !== a.pts) return b.pts - a.pts;
         if (b.gd !== a.gd) return b.gd - a.gd;
@@ -574,7 +657,6 @@ function calculateWildcards() {
 
     state.wildcards = thirdPlaceTeams.slice(0, 8);
 
-    // Render Wildcard Table
     const tbody = document.getElementById('wildcard-table-body');
     if (!tbody) return;
     tbody.innerHTML = '';
@@ -602,7 +684,7 @@ function calculateWildcards() {
     });
 }
 
-// 5. Populate Round of 32
+// 5. Populate Round of 32 (with Auto-Advancement to R16)
 function populateRound32() {
     const assignedWildcards = new Set();
 
@@ -614,14 +696,12 @@ function populateRound32() {
         let team1 = null;
         let team2 = null;
 
-        // Team 1 Source
         if (config.team1Src.type === 'group-winner') {
             team1 = state.groupStandings[config.team1Src.group][0];
         } else if (config.team1Src.type === 'group-runner-up') {
             team1 = state.groupStandings[config.team1Src.group][1];
         }
 
-        // Team 2 Source
         if (config.team2Src.type === 'group-winner') {
             team2 = state.groupStandings[config.team2Src.group][0];
         } else if (config.team2Src.type === 'group-runner-up') {
@@ -642,10 +722,8 @@ function populateRound32() {
             }
         }
 
-        // Update match state
         const currentMatch = state.knockouts[matchId];
         
-        // If team changed, propagate the reset down the line (only if not locked by Live API)
         if (!currentMatch.finished) {
             if (currentMatch.team1?.id !== team1?.id) {
                 currentMatch.team1 = team1;
@@ -663,7 +741,7 @@ function populateRound32() {
 
 function resetMatchWinner(matchId) {
     const match = state.knockouts[matchId];
-    if (!match || match.finished) return; // Do not reset live locked matches
+    if (!match || match.finished) return;
 
     match.winner = null;
     match.loser = null;
@@ -696,8 +774,7 @@ function resetMatchWinner(matchId) {
 function propagateGroupChanges() {
     populateRound32();
     propagateKnockouts();
-    renderKnockoutBracket();
-    checkChampion();
+    updateAllViews();
 }
 
 function propagateKnockouts() {
@@ -714,7 +791,6 @@ function propagateKnockouts() {
         const config = MATCH_CONFIGS[matchId];
         if (!match || !config) return;
 
-        // Fetch team 1 from source (only if not locked by Live API)
         if (!match.finished) {
             if (config.team1Src.type === 'match-winner') {
                 const srcMatch = state.knockouts[config.team1Src.matchId];
@@ -724,7 +800,6 @@ function propagateKnockouts() {
                 match.team1 = srcMatch ? srcMatch.loser : null;
             }
 
-            // Fetch team 2 from source
             if (config.team2Src.type === 'match-winner') {
                 const srcMatch = state.knockouts[config.team2Src.matchId];
                 match.team2 = srcMatch ? srcMatch.winner : null;
@@ -733,7 +808,6 @@ function propagateKnockouts() {
                 match.team2 = srcMatch ? srcMatch.loser : null;
             }
 
-            // If either team is missing, reset winner
             if (!match.team1 || !match.team2) {
                 match.winner = null;
                 match.loser = null;
@@ -741,7 +815,6 @@ function propagateKnockouts() {
                 match.score2 = null;
             }
 
-            // If winner exists, ensure it is still one of the two teams. If not, reset.
             if (match.winner) {
                 if (match.winner.id !== match.team1.id && match.winner.id !== match.team2.id) {
                     match.winner = null;
@@ -754,6 +827,18 @@ function propagateKnockouts() {
     });
 
     saveState();
+}
+
+// Helper to refresh all visible elements based on active view
+function updateAllViews() {
+    renderGroupStage();
+    renderKnockoutBracket();
+    checkChampion();
+    
+    const matchesView = document.getElementById('matches-view');
+    if (matchesView && matchesView.classList.contains('active')) {
+        renderMatchesTable();
+    }
 }
 
 // 6. Render Knockout Bracket
@@ -810,7 +895,6 @@ function buildMatchCardContent(matchId) {
     const meta = document.createElement('div');
     meta.className = 'match-meta';
     
-    // Add live status badge to knockout meta if match is live
     let liveBadgeHTML = '';
     if (match.finished) {
         liveBadgeHTML = '<span class="match-status-badge">Live</span>';
@@ -843,7 +927,6 @@ function buildMatchCardContent(matchId) {
             score.textContent = isTeam1 ? (match.score1 !== null ? match.score1 : '-') : (match.score2 !== null ? match.score2 : '-');
             row.appendChild(score);
             
-            // Allow clicking to advance team if NOT locked by Live API
             if (!match.finished) {
                 row.onclick = (e) => {
                     e.stopPropagation();
@@ -851,14 +934,7 @@ function buildMatchCardContent(matchId) {
                 };
             }
         } else {
-            let placeholderText = 'TBD';
-            const src = isTeam1 ? config.team1Src : config.team2Src;
-            if (src.type === 'group-winner') placeholderText = `Winner Gr. ${src.group}`;
-            else if (src.type === 'group-runner-up') placeholderText = `Runner-up Gr. ${src.group}`;
-            else if (src.type === 'wildcard') placeholderText = `3rd Place wildcard`;
-            else if (src.type === 'match-winner') placeholderText = `Winner Match ${src.matchId}`;
-            else if (src.type === 'match-loser') placeholderText = `Loser Match ${src.matchId}`;
-
+            let placeholderText = getKnockoutPlaceholder(matchId, isTeam1);
             info.innerHTML = `
                 <span class="material-symbols-outlined" style="font-size: 16px; color: var(--text-dimmed);">help_outline</span>
                 <span class="match-team-name placeholder">${placeholderText}</span>
@@ -887,7 +963,6 @@ function advanceWinningTeam(matchId, teamId) {
     match.winner = winner;
     match.loser = loser;
 
-    // Simulate score
     const isTeam1Winner = match.team1.id === winner.id;
     if (isTeam1Winner) {
         match.score1 = 2 + Math.floor(Math.random() * 2);
@@ -899,8 +974,7 @@ function advanceWinningTeam(matchId, teamId) {
 
     saveState();
     propagateKnockouts();
-    renderKnockoutBracket();
-    checkChampion();
+    updateAllViews();
 }
 
 function checkChampion() {
@@ -921,16 +995,120 @@ function checkChampion() {
     }
 }
 
-// 7. Auto-Simulation and AI Predictor Engine
+// 7. Render 'Match Table' Section (All 104 matches in IST with Venues)
+function renderMatchesTable() {
+    const container = document.getElementById('fixtures-grid-container');
+    if (!container) return;
+    container.innerHTML = '';
 
-// Simulate a single group stage
+    const filter = state.activeFixtureFilter;
+    let visibleCount = 0;
+
+    for (let id = 1; id <= 104; id++) {
+        let match = null;
+        let isKnockout = id >= 73;
+
+        if (isKnockout) {
+            match = state.knockouts[id];
+        } else {
+            match = state.groupMatches.find(m => m.id === id);
+        }
+
+        if (!match) continue;
+
+        // Apply tab filters
+        if (filter === 'group' && isKnockout) continue;
+        if (filter === 'knockout' && !isKnockout) continue;
+        if (filter === 'live' && !match.finished) continue;
+
+        // Team names and flag setups
+        const team1 = match.team1 || match.homeTeam || null;
+        const team2 = match.team2 || match.awayTeam || null;
+
+        const team1Name = team1 ? team1.name : (isKnockout ? getKnockoutPlaceholder(id, true) : 'TBD');
+        const team2Name = team2 ? team2.name : (isKnockout ? getKnockoutPlaceholder(id, false) : 'TBD');
+
+        const team1Flag = team1 ? `https://flagcdn.com/w40/${team1.flag}.png` : 'https://flagcdn.com/w40/un.png';
+        const team2Flag = team2 ? `https://flagcdn.com/w40/${team2.flag}.png` : 'https://flagcdn.com/w40/un.png';
+
+        const score1 = match.score1 !== null ? match.score1 : '-';
+        const score2 = match.score2 !== null ? match.score2 : '-';
+
+        // Retrieve schedule details
+        const schedule = state.matchSchedules[id] || { localDate: '06/15/2026 12:00', stadiumId: '1' };
+        const istDateStr = getISTDate(schedule.localDate, schedule.stadiumId);
+        
+        const stadium = STADIUMS[parseInt(schedule.stadiumId)] || { name: 'TBD Stadium' };
+        const venueName = stadium.name;
+
+        const card = document.createElement('div');
+        card.className = `fixture-card glass-panel ${match.finished ? 'finished' : ''}`;
+
+        card.innerHTML = `
+            <div class="fixture-meta">
+                <span class="match-num-badge">Match ${id}</span>
+                <span class="stage-badge">${isKnockout ? 'Knockout' : 'Group ' + match.group}</span>
+                <span class="time-badge">${istDateStr}</span>
+            </div>
+            <div class="fixture-teams-area">
+                <div class="fixture-team home">
+                    <span class="fixture-name" title="${team1Name}">${team1Name}</span>
+                    <img class="flag-img" src="${team1Flag}" alt="">
+                </div>
+                <div class="fixture-score-area">
+                    <span class="fixture-score-val">${score1}</span>
+                    <span class="fixture-score-separator">:</span>
+                    <span class="fixture-score-val">${score2}</span>
+                </div>
+                <div class="fixture-team away">
+                    <img class="flag-img" src="${team2Flag}" alt="">
+                    <span class="fixture-name" title="${team2Name}">${team2Name}</span>
+                </div>
+            </div>
+            <div class="venue-info">
+                <span class="material-symbols-outlined" style="font-size: 14px;">location_on</span>
+                <span>${venueName}</span>
+            </div>
+            ${match.finished ? '<span class="live-tag">LIVE / OFFICIAL</span>' : '<span class="pred-tag">PREDICTED</span>'}
+        `;
+
+        container.appendChild(card);
+        visibleCount++;
+    }
+
+    if (visibleCount === 0) {
+        container.innerHTML = '<div class="no-fixtures" style="grid-column: 1/-1; text-align: center; color: var(--text-dimmed); padding: 3rem;">No matches found matching this filter.</div>';
+    }
+}
+
+function filterFixtures(filterType) {
+    state.activeFixtureFilter = filterType;
+    
+    // Toggle active filter button styling
+    const filterIds = {
+        'all': 'filter-all',
+        'group': 'filter-group',
+        'knockout': 'filter-knockout',
+        'live': 'filter-live'
+    };
+    
+    Object.keys(filterIds).forEach(k => {
+        const btn = document.getElementById(filterIds[k]);
+        if (btn) {
+            if (k === filterType) btn.classList.add('active');
+            else btn.classList.remove('active');
+        }
+    });
+    
+    renderMatchesTable();
+}
+
+// 8. Auto-Simulation Engine
 window.simSingleGroup = function(gLetter) {
     const matches = state.groupMatches.filter(m => m.group === gLetter);
 
     matches.forEach(match => {
-        // Skip finished live matches
         if (match.finished) return;
-
         const sim = runMatchSimulation(match.homeTeam.rating, match.awayTeam.rating);
         match.score1 = sim.goals1;
         match.score2 = sim.goals2;
@@ -1012,7 +1190,6 @@ function simAllKnockouts() {
             match.loser = match.team1;
         }
 
-        // Propagate winner downstream immediately
         const config = MATCH_CONFIGS[matchId];
         if (config && config.dest) {
             const destMatch = state.knockouts[config.dest.matchId];
@@ -1029,30 +1206,40 @@ function simAllKnockouts() {
     });
 
     saveState();
-    renderKnockoutBracket();
-    checkChampion();
+    updateAllViews();
 }
 
-// 8. Event Listeners
+// 9. Event Listeners and Tab controllers
 function setupEventListeners() {
     const btnGroup = document.getElementById('btn-group-view');
     const btnBracket = document.getElementById('btn-bracket-view');
+    const btnMatches = document.getElementById('btn-matches-view');
+    
     const viewGroup = document.getElementById('group-stage-view');
     const viewBracket = document.getElementById('bracket-view');
+    const viewMatches = document.getElementById('matches-view');
 
-    btnGroup.addEventListener('click', () => {
-        btnGroup.classList.add('active');
-        btnBracket.classList.remove('active');
-        viewGroup.classList.add('active');
-        viewBracket.classList.remove('active');
-    });
+    function switchView(activeBtn, activeView) {
+        [btnGroup, btnBracket, btnMatches].forEach(btn => btn.classList.remove('active'));
+        [viewGroup, viewBracket, viewMatches].forEach(view => view.classList.remove('active'));
+        
+        activeBtn.classList.add('active');
+        activeView.classList.add('active');
+        
+        if (activeView === viewMatches) {
+            renderMatchesTable();
+        }
+    }
 
-    btnBracket.addEventListener('click', () => {
-        btnBracket.classList.add('active');
-        btnGroup.classList.remove('active');
-        viewBracket.classList.add('active');
-        viewGroup.classList.remove('active');
-    });
+    btnGroup.addEventListener('click', () => switchView(btnGroup, viewGroup));
+    btnBracket.addEventListener('click', () => switchView(btnBracket, viewBracket));
+    btnMatches.addEventListener('click', () => switchView(btnMatches, viewMatches));
+
+    // Match Table Filters click bindings
+    document.getElementById('filter-all').addEventListener('click', () => filterFixtures('all'));
+    document.getElementById('filter-group').addEventListener('click', () => filterFixtures('group'));
+    document.getElementById('filter-knockout').addEventListener('click', () => filterFixtures('knockout'));
+    document.getElementById('filter-live').addEventListener('click', () => filterFixtures('live'));
 
     document.getElementById('btn-sim-groups').addEventListener('click', () => {
         simAllGroups();
@@ -1124,6 +1311,5 @@ function setupEventListeners() {
         alert('Predictions copied to clipboard!');
     });
 
-    // Auto-update polling interval (refresh every 12 hours if tab remains open)
     setInterval(fetchLiveTournamentData, 12 * 60 * 60 * 1000);
 }

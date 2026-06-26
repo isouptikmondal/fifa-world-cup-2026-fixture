@@ -761,7 +761,7 @@ body {
     justify-content: space-around;
     align-items: center;
     height: 860px; /* Locked height so space-around works beautifully */
-    width: 23%;
+    width: 23%; /* Set to 23% to fit 4 columns beautifully */
 }
 
 .round-title {
@@ -1301,5 +1301,193 @@ body {
     
     .group-match-team-name {
         max-width: 75px;
+    }
+}
+
+/* --- Match Table View --- */
+.fixture-filters {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    background: rgba(255, 255, 255, 0.04);
+    border: var(--glass-border);
+    color: var(--text-muted);
+    padding: 0.5rem 1.25rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: var(--border-radius-md);
+    transition: var(--transition-smooth);
+}
+
+.filter-btn.active, .filter-btn:hover {
+    background: var(--primary);
+    color: var(--bg-dark);
+    border-color: var(--primary);
+    box-shadow: 0 0 12px var(--primary-glow);
+}
+
+.fixtures-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.fixture-card {
+    border-radius: var(--border-radius-lg);
+    padding: 1.25rem;
+    transition: var(--transition-smooth);
+    position: relative;
+    overflow: hidden;
+}
+
+.fixture-card:hover {
+    border-color: var(--primary-glow);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    transform: translateY(-2px);
+}
+
+.fixture-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    font-size: 0.75rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    padding-bottom: 0.5rem;
+}
+
+.match-num-badge {
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.stage-badge {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    color: var(--text-muted);
+}
+
+.time-badge {
+    font-weight: 600;
+    color: var(--accent-gold);
+}
+
+.fixture-teams-area {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+}
+
+.fixture-team {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.fixture-team.home {
+    justify-content: flex-end;
+    text-align: right;
+}
+
+.fixture-team.away {
+    justify-content: flex-start;
+    text-align: left;
+}
+
+.fixture-name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100px;
+}
+
+.fixture-score-area {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    width: 60px;
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--text-main);
+}
+
+.fixture-score-separator {
+    color: var(--text-dimmed);
+    font-size: 1rem;
+}
+
+.venue-info {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.75rem;
+    color: var(--text-dimmed);
+    justify-content: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.02);
+    padding-top: 0.5rem;
+}
+
+.live-tag, .pred-tag {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    font-size: 0.55rem;
+    font-weight: 800;
+    padding: 0.15rem 0.45rem;
+    border-top-left-radius: 6px;
+    text-transform: uppercase;
+}
+
+.live-tag {
+    background: var(--success-glow);
+    color: var(--success);
+    border-left: 1px solid rgba(46, 204, 113, 0.2);
+    border-top: 1px solid rgba(46, 204, 113, 0.2);
+}
+
+.pred-tag {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-dimmed);
+}
+
+/* Adjustments for mobile view */
+@media (max-width: 768px) {
+    .fixture-filters {
+        justify-content: center;
+        gap: 0.5rem;
+    }
+    
+    .filter-btn {
+        padding: 0.4rem 0.85rem;
+        font-size: 0.75rem;
+    }
+    
+    .fixtures-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .fixture-card {
+        padding: 1rem;
+    }
+    
+    .fixture-name {
+        max-width: 80px;
+    }
+    
+    .bracket-round {
+        width: 23%; /* Tighter margins on 4 columns */
     }
 }
