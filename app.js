@@ -95,6 +95,1180 @@ const STADIUMS = {
     16: { name: 'NRG Stadium (Houston)', offset: -5 }
 };
 
+const OFFICIAL_GROUP_MATCHES = [
+    {
+        "id": 1,
+        "homeApiId": 1,
+        "awayApiId": 2,
+        "group": "A",
+        "localDate": "06/11/2026 15:00",
+        "stadiumId": "1",
+        "istDate": "12 Jun 2026 • 00:30 IST"
+    },
+    {
+        "id": 2,
+        "homeApiId": 3,
+        "awayApiId": 4,
+        "group": "A",
+        "localDate": "06/11/2026 22:00",
+        "stadiumId": "15",
+        "istDate": "12 Jun 2026 • 07:30 IST"
+    },
+    {
+        "id": 3,
+        "homeApiId": 5,
+        "awayApiId": 6,
+        "group": "B",
+        "localDate": "06/12/2026 15:00",
+        "stadiumId": "2",
+        "istDate": "13 Jun 2026 • 00:30 IST"
+    },
+    {
+        "id": 4,
+        "homeApiId": 13,
+        "awayApiId": 14,
+        "group": "D",
+        "localDate": "06/12/2026 21:00",
+        "stadiumId": "5",
+        "istDate": "13 Jun 2026 • 06:30 IST"
+    },
+    {
+        "id": 5,
+        "homeApiId": 7,
+        "awayApiId": 8,
+        "group": "B",
+        "localDate": "06/13/2026 15:00",
+        "stadiumId": "14",
+        "istDate": "14 Jun 2026 • 00:30 IST"
+    },
+    {
+        "id": 6,
+        "homeApiId": 9,
+        "awayApiId": 10,
+        "group": "C",
+        "localDate": "06/13/2026 18:00",
+        "stadiumId": "11",
+        "istDate": "14 Jun 2026 • 03:30 IST"
+    },
+    {
+        "id": 7,
+        "homeApiId": 11,
+        "awayApiId": 12,
+        "group": "C",
+        "localDate": "06/13/2026 21:00",
+        "stadiumId": "9",
+        "istDate": "14 Jun 2026 • 06:30 IST"
+    },
+    {
+        "id": 8,
+        "homeApiId": 15,
+        "awayApiId": 16,
+        "group": "D",
+        "localDate": "06/14/2026 00:00",
+        "stadiumId": "13",
+        "istDate": "14 Jun 2026 • 09:30 IST"
+    },
+    {
+        "id": 9,
+        "homeApiId": 17,
+        "awayApiId": 18,
+        "group": "E",
+        "localDate": "06/14/2026 13:00",
+        "stadiumId": "16",
+        "istDate": "14 Jun 2026 • 22:30 IST"
+    },
+    {
+        "id": 10,
+        "homeApiId": 21,
+        "awayApiId": 22,
+        "group": "F",
+        "localDate": "06/14/2026 16:00",
+        "stadiumId": "4",
+        "istDate": "15 Jun 2026 • 01:30 IST"
+    },
+    {
+        "id": 11,
+        "homeApiId": 19,
+        "awayApiId": 20,
+        "group": "E",
+        "localDate": "06/14/2026 19:00",
+        "stadiumId": "7",
+        "istDate": "15 Jun 2026 • 04:30 IST"
+    },
+    {
+        "id": 12,
+        "homeApiId": 23,
+        "awayApiId": 24,
+        "group": "F",
+        "localDate": "06/14/2026 22:00",
+        "stadiumId": "3",
+        "istDate": "15 Jun 2026 • 07:30 IST"
+    },
+    {
+        "id": 13,
+        "homeApiId": 29,
+        "awayApiId": 30,
+        "group": "H",
+        "localDate": "06/15/2026 12:00",
+        "stadiumId": "10",
+        "istDate": "15 Jun 2026 • 21:30 IST"
+    },
+    {
+        "id": 14,
+        "homeApiId": 25,
+        "awayApiId": 26,
+        "group": "G",
+        "localDate": "06/15/2026 15:00",
+        "stadiumId": "12",
+        "istDate": "16 Jun 2026 • 00:30 IST"
+    },
+    {
+        "id": 15,
+        "homeApiId": 31,
+        "awayApiId": 32,
+        "group": "H",
+        "localDate": "06/15/2026 18:00",
+        "stadiumId": "6",
+        "istDate": "16 Jun 2026 • 03:30 IST"
+    },
+    {
+        "id": 16,
+        "homeApiId": 27,
+        "awayApiId": 28,
+        "group": "G",
+        "localDate": "06/15/2026 21:00",
+        "stadiumId": "5",
+        "istDate": "16 Jun 2026 • 06:30 IST"
+    },
+    {
+        "id": 17,
+        "homeApiId": 33,
+        "awayApiId": 34,
+        "group": "I",
+        "localDate": "06/16/2026 15:00",
+        "stadiumId": "11",
+        "istDate": "17 Jun 2026 • 00:30 IST"
+    },
+    {
+        "id": 18,
+        "homeApiId": 35,
+        "awayApiId": 36,
+        "group": "I",
+        "localDate": "06/16/2026 18:00",
+        "stadiumId": "9",
+        "istDate": "17 Jun 2026 • 03:30 IST"
+    },
+    {
+        "id": 19,
+        "homeApiId": 37,
+        "awayApiId": 38,
+        "group": "J",
+        "localDate": "06/16/2026 21:00",
+        "stadiumId": "8",
+        "istDate": "17 Jun 2026 • 06:30 IST"
+    },
+    {
+        "id": 20,
+        "homeApiId": 39,
+        "awayApiId": 40,
+        "group": "J",
+        "localDate": "06/17/2026 00:00",
+        "stadiumId": "14",
+        "istDate": "17 Jun 2026 • 09:30 IST"
+    },
+    {
+        "id": 21,
+        "homeApiId": 41,
+        "awayApiId": 42,
+        "group": "K",
+        "localDate": "06/17/2026 13:00",
+        "stadiumId": "16",
+        "istDate": "17 Jun 2026 • 22:30 IST"
+    },
+    {
+        "id": 22,
+        "homeApiId": 45,
+        "awayApiId": 46,
+        "group": "L",
+        "localDate": "06/17/2026 16:00",
+        "stadiumId": "4",
+        "istDate": "18 Jun 2026 • 01:30 IST"
+    },
+    {
+        "id": 23,
+        "homeApiId": 47,
+        "awayApiId": 48,
+        "group": "L",
+        "localDate": "06/17/2026 19:00",
+        "stadiumId": "2",
+        "istDate": "18 Jun 2026 • 04:30 IST"
+    },
+    {
+        "id": 24,
+        "homeApiId": 43,
+        "awayApiId": 44,
+        "group": "K",
+        "localDate": "06/17/2026 22:00",
+        "stadiumId": "1",
+        "istDate": "18 Jun 2026 • 07:30 IST"
+    },
+    {
+        "id": 25,
+        "homeApiId": 4,
+        "awayApiId": 2,
+        "group": "A",
+        "localDate": "06/18/2026 12:00",
+        "stadiumId": "10",
+        "istDate": "18 Jun 2026 • 21:30 IST"
+    },
+    {
+        "id": 26,
+        "homeApiId": 8,
+        "awayApiId": 6,
+        "group": "B",
+        "localDate": "06/18/2026 15:00",
+        "stadiumId": "5",
+        "istDate": "19 Jun 2026 • 00:30 IST"
+    },
+    {
+        "id": 27,
+        "homeApiId": 5,
+        "awayApiId": 7,
+        "group": "B",
+        "localDate": "06/18/2026 18:00",
+        "stadiumId": "13",
+        "istDate": "19 Jun 2026 • 03:30 IST"
+    },
+    {
+        "id": 28,
+        "homeApiId": 1,
+        "awayApiId": 3,
+        "group": "A",
+        "localDate": "06/18/2026 21:00",
+        "stadiumId": "15",
+        "istDate": "19 Jun 2026 • 06:30 IST"
+    },
+    {
+        "id": 29,
+        "homeApiId": 13,
+        "awayApiId": 15,
+        "group": "D",
+        "localDate": "06/19/2026 15:00",
+        "stadiumId": "12",
+        "istDate": "20 Jun 2026 • 00:30 IST"
+    },
+    {
+        "id": 30,
+        "homeApiId": 12,
+        "awayApiId": 10,
+        "group": "C",
+        "localDate": "06/19/2026 18:00",
+        "stadiumId": "9",
+        "istDate": "20 Jun 2026 • 03:30 IST"
+    },
+    {
+        "id": 31,
+        "homeApiId": 9,
+        "awayApiId": 11,
+        "group": "C",
+        "localDate": "06/19/2026 20:30",
+        "stadiumId": "7",
+        "istDate": "20 Jun 2026 • 06:00 IST"
+    },
+    {
+        "id": 32,
+        "homeApiId": 16,
+        "awayApiId": 14,
+        "group": "D",
+        "localDate": "06/19/2026 23:00",
+        "stadiumId": "14",
+        "istDate": "20 Jun 2026 • 08:30 IST"
+    },
+    {
+        "id": 33,
+        "homeApiId": 21,
+        "awayApiId": 23,
+        "group": "F",
+        "localDate": "06/20/2026 13:00",
+        "stadiumId": "16",
+        "istDate": "20 Jun 2026 • 22:30 IST"
+    },
+    {
+        "id": 34,
+        "homeApiId": 17,
+        "awayApiId": 19,
+        "group": "E",
+        "localDate": "06/20/2026 16:00",
+        "stadiumId": "2",
+        "istDate": "21 Jun 2026 • 01:30 IST"
+    },
+    {
+        "id": 35,
+        "homeApiId": 20,
+        "awayApiId": 18,
+        "group": "E",
+        "localDate": "06/20/2026 20:00",
+        "stadiumId": "8",
+        "istDate": "21 Jun 2026 • 05:30 IST"
+    },
+    {
+        "id": 36,
+        "homeApiId": 24,
+        "awayApiId": 22,
+        "group": "F",
+        "localDate": "06/21/2026 00:00",
+        "stadiumId": "3",
+        "istDate": "21 Jun 2026 • 09:30 IST"
+    },
+    {
+        "id": 37,
+        "homeApiId": 29,
+        "awayApiId": 31,
+        "group": "H",
+        "localDate": "06/21/2026 12:00",
+        "stadiumId": "10",
+        "istDate": "21 Jun 2026 • 21:30 IST"
+    },
+    {
+        "id": 38,
+        "homeApiId": 25,
+        "awayApiId": 27,
+        "group": "G",
+        "localDate": "06/21/2026 15:00",
+        "stadiumId": "5",
+        "istDate": "22 Jun 2026 • 00:30 IST"
+    },
+    {
+        "id": 39,
+        "homeApiId": 32,
+        "awayApiId": 30,
+        "group": "H",
+        "localDate": "06/21/2026 18:00",
+        "stadiumId": "6",
+        "istDate": "22 Jun 2026 • 03:30 IST"
+    },
+    {
+        "id": 40,
+        "homeApiId": 28,
+        "awayApiId": 26,
+        "group": "G",
+        "localDate": "06/21/2026 21:00",
+        "stadiumId": "13",
+        "istDate": "22 Jun 2026 • 06:30 IST"
+    },
+    {
+        "id": 41,
+        "homeApiId": 37,
+        "awayApiId": 39,
+        "group": "J",
+        "localDate": "06/22/2026 13:00",
+        "stadiumId": "4",
+        "istDate": "22 Jun 2026 • 22:30 IST"
+    },
+    {
+        "id": 42,
+        "homeApiId": 33,
+        "awayApiId": 35,
+        "group": "I",
+        "localDate": "06/22/2026 17:00",
+        "stadiumId": "7",
+        "istDate": "23 Jun 2026 • 02:30 IST"
+    },
+    {
+        "id": 43,
+        "homeApiId": 36,
+        "awayApiId": 34,
+        "group": "I",
+        "localDate": "06/22/2026 20:00",
+        "stadiumId": "11",
+        "istDate": "23 Jun 2026 • 05:30 IST"
+    },
+    {
+        "id": 44,
+        "homeApiId": 40,
+        "awayApiId": 38,
+        "group": "J",
+        "localDate": "06/22/2026 23:00",
+        "stadiumId": "14",
+        "istDate": "23 Jun 2026 • 08:30 IST"
+    },
+    {
+        "id": 45,
+        "homeApiId": 41,
+        "awayApiId": 43,
+        "group": "K",
+        "localDate": "06/23/2026 13:00",
+        "stadiumId": "16",
+        "istDate": "23 Jun 2026 • 22:30 IST"
+    },
+    {
+        "id": 46,
+        "homeApiId": 45,
+        "awayApiId": 47,
+        "group": "L",
+        "localDate": "06/23/2026 16:00",
+        "stadiumId": "9",
+        "istDate": "24 Jun 2026 • 01:30 IST"
+    },
+    {
+        "id": 47,
+        "homeApiId": 48,
+        "awayApiId": 46,
+        "group": "L",
+        "localDate": "06/23/2026 19:00",
+        "stadiumId": "2",
+        "istDate": "24 Jun 2026 • 04:30 IST"
+    },
+    {
+        "id": 48,
+        "homeApiId": 44,
+        "awayApiId": 42,
+        "group": "K",
+        "localDate": "06/23/2026 22:00",
+        "stadiumId": "15",
+        "istDate": "24 Jun 2026 • 07:30 IST"
+    },
+    {
+        "id": 49,
+        "homeApiId": 8,
+        "awayApiId": 5,
+        "group": "B",
+        "localDate": "06/24/2026 15:00",
+        "stadiumId": "13",
+        "istDate": "25 Jun 2026 • 00:30 IST"
+    },
+    {
+        "id": 50,
+        "homeApiId": 6,
+        "awayApiId": 7,
+        "group": "B",
+        "localDate": "06/24/2026 15:00",
+        "stadiumId": "12",
+        "istDate": "25 Jun 2026 • 00:30 IST"
+    },
+    {
+        "id": 51,
+        "homeApiId": 12,
+        "awayApiId": 9,
+        "group": "C",
+        "localDate": "06/24/2026 18:00",
+        "stadiumId": "6",
+        "istDate": "25 Jun 2026 • 03:30 IST"
+    },
+    {
+        "id": 52,
+        "homeApiId": 10,
+        "awayApiId": 11,
+        "group": "C",
+        "localDate": "06/24/2026 18:00",
+        "stadiumId": "10",
+        "istDate": "25 Jun 2026 • 03:30 IST"
+    },
+    {
+        "id": 53,
+        "homeApiId": 4,
+        "awayApiId": 1,
+        "group": "A",
+        "localDate": "06/24/2026 21:00",
+        "stadiumId": "1",
+        "istDate": "25 Jun 2026 • 06:30 IST"
+    },
+    {
+        "id": 54,
+        "homeApiId": 2,
+        "awayApiId": 3,
+        "group": "A",
+        "localDate": "06/24/2026 21:00",
+        "stadiumId": "3",
+        "istDate": "25 Jun 2026 • 06:30 IST"
+    },
+    {
+        "id": 55,
+        "homeApiId": 20,
+        "awayApiId": 17,
+        "group": "E",
+        "localDate": "06/25/2026 16:00",
+        "stadiumId": "11",
+        "istDate": "26 Jun 2026 • 01:30 IST"
+    },
+    {
+        "id": 56,
+        "homeApiId": 18,
+        "awayApiId": 19,
+        "group": "E",
+        "localDate": "06/25/2026 16:00",
+        "stadiumId": "7",
+        "istDate": "26 Jun 2026 • 01:30 IST"
+    },
+    {
+        "id": 57,
+        "homeApiId": 24,
+        "awayApiId": 21,
+        "group": "F",
+        "localDate": "06/25/2026 19:00",
+        "stadiumId": "8",
+        "istDate": "26 Jun 2026 • 04:30 IST"
+    },
+    {
+        "id": 58,
+        "homeApiId": 22,
+        "awayApiId": 23,
+        "group": "F",
+        "localDate": "06/25/2026 19:00",
+        "stadiumId": "4",
+        "istDate": "26 Jun 2026 • 04:30 IST"
+    },
+    {
+        "id": 59,
+        "homeApiId": 16,
+        "awayApiId": 13,
+        "group": "D",
+        "localDate": "06/25/2026 22:00",
+        "stadiumId": "5",
+        "istDate": "26 Jun 2026 • 07:30 IST"
+    },
+    {
+        "id": 60,
+        "homeApiId": 14,
+        "awayApiId": 15,
+        "group": "D",
+        "localDate": "06/25/2026 22:00",
+        "stadiumId": "14",
+        "istDate": "26 Jun 2026 • 07:30 IST"
+    },
+    {
+        "id": 61,
+        "homeApiId": 36,
+        "awayApiId": 33,
+        "group": "I",
+        "localDate": "06/26/2026 15:00",
+        "stadiumId": "9",
+        "istDate": "27 Jun 2026 • 00:30 IST"
+    },
+    {
+        "id": 62,
+        "homeApiId": 34,
+        "awayApiId": 35,
+        "group": "I",
+        "localDate": "06/26/2026 15:00",
+        "stadiumId": "2",
+        "istDate": "27 Jun 2026 • 00:30 IST"
+    },
+    {
+        "id": 63,
+        "homeApiId": 32,
+        "awayApiId": 29,
+        "group": "H",
+        "localDate": "06/26/2026 20:00",
+        "stadiumId": "15",
+        "istDate": "27 Jun 2026 • 05:30 IST"
+    },
+    {
+        "id": 64,
+        "homeApiId": 30,
+        "awayApiId": 31,
+        "group": "H",
+        "localDate": "06/26/2026 20:00",
+        "stadiumId": "16",
+        "istDate": "27 Jun 2026 • 05:30 IST"
+    },
+    {
+        "id": 65,
+        "homeApiId": 28,
+        "awayApiId": 25,
+        "group": "G",
+        "localDate": "06/26/2026 23:00",
+        "stadiumId": "13",
+        "istDate": "27 Jun 2026 • 08:30 IST"
+    },
+    {
+        "id": 66,
+        "homeApiId": 26,
+        "awayApiId": 27,
+        "group": "G",
+        "localDate": "06/26/2026 23:00",
+        "stadiumId": "12",
+        "istDate": "27 Jun 2026 • 08:30 IST"
+    },
+    {
+        "id": 67,
+        "homeApiId": 48,
+        "awayApiId": 45,
+        "group": "L",
+        "localDate": "06/27/2026 17:00",
+        "stadiumId": "11",
+        "istDate": "28 Jun 2026 • 02:30 IST"
+    },
+    {
+        "id": 68,
+        "homeApiId": 46,
+        "awayApiId": 47,
+        "group": "L",
+        "localDate": "06/27/2026 17:00",
+        "stadiumId": "7",
+        "istDate": "28 Jun 2026 • 02:30 IST"
+    },
+    {
+        "id": 69,
+        "homeApiId": 44,
+        "awayApiId": 41,
+        "group": "K",
+        "localDate": "06/27/2026 19:30",
+        "stadiumId": "6",
+        "istDate": "28 Jun 2026 • 05:00 IST"
+    },
+    {
+        "id": 70,
+        "homeApiId": 42,
+        "awayApiId": 43,
+        "group": "K",
+        "localDate": "06/27/2026 19:30",
+        "stadiumId": "10",
+        "istDate": "28 Jun 2026 • 05:00 IST"
+    },
+    {
+        "id": 71,
+        "homeApiId": 40,
+        "awayApiId": 37,
+        "group": "J",
+        "localDate": "06/27/2026 23:00",
+        "stadiumId": "4",
+        "istDate": "28 Jun 2026 • 08:30 IST"
+    },
+    {
+        "id": 72,
+        "homeApiId": 38,
+        "awayApiId": 39,
+        "group": "J",
+        "localDate": "06/27/2026 23:00",
+        "stadiumId": "8",
+        "istDate": "28 Jun 2026 • 08:30 IST"
+    }
+];
+
+const OFFICIAL_SCHEDULES = {
+    "1": {
+        "localDate": "06/11/2026 15:00",
+        "stadiumId": "1",
+        "istDate": "12 Jun 2026 • 00:30 IST"
+    },
+    "2": {
+        "localDate": "06/11/2026 22:00",
+        "stadiumId": "15",
+        "istDate": "12 Jun 2026 • 07:30 IST"
+    },
+    "3": {
+        "localDate": "06/12/2026 15:00",
+        "stadiumId": "2",
+        "istDate": "13 Jun 2026 • 00:30 IST"
+    },
+    "4": {
+        "localDate": "06/12/2026 21:00",
+        "stadiumId": "5",
+        "istDate": "13 Jun 2026 • 06:30 IST"
+    },
+    "5": {
+        "localDate": "06/13/2026 15:00",
+        "stadiumId": "14",
+        "istDate": "14 Jun 2026 • 00:30 IST"
+    },
+    "6": {
+        "localDate": "06/13/2026 18:00",
+        "stadiumId": "11",
+        "istDate": "14 Jun 2026 • 03:30 IST"
+    },
+    "7": {
+        "localDate": "06/13/2026 21:00",
+        "stadiumId": "9",
+        "istDate": "14 Jun 2026 • 06:30 IST"
+    },
+    "8": {
+        "localDate": "06/14/2026 00:00",
+        "stadiumId": "13",
+        "istDate": "14 Jun 2026 • 09:30 IST"
+    },
+    "9": {
+        "localDate": "06/14/2026 13:00",
+        "stadiumId": "16",
+        "istDate": "14 Jun 2026 • 22:30 IST"
+    },
+    "10": {
+        "localDate": "06/14/2026 16:00",
+        "stadiumId": "4",
+        "istDate": "15 Jun 2026 • 01:30 IST"
+    },
+    "11": {
+        "localDate": "06/14/2026 19:00",
+        "stadiumId": "7",
+        "istDate": "15 Jun 2026 • 04:30 IST"
+    },
+    "12": {
+        "localDate": "06/14/2026 22:00",
+        "stadiumId": "3",
+        "istDate": "15 Jun 2026 • 07:30 IST"
+    },
+    "13": {
+        "localDate": "06/15/2026 12:00",
+        "stadiumId": "10",
+        "istDate": "15 Jun 2026 • 21:30 IST"
+    },
+    "14": {
+        "localDate": "06/15/2026 15:00",
+        "stadiumId": "12",
+        "istDate": "16 Jun 2026 • 00:30 IST"
+    },
+    "15": {
+        "localDate": "06/15/2026 18:00",
+        "stadiumId": "6",
+        "istDate": "16 Jun 2026 • 03:30 IST"
+    },
+    "16": {
+        "localDate": "06/15/2026 21:00",
+        "stadiumId": "5",
+        "istDate": "16 Jun 2026 • 06:30 IST"
+    },
+    "17": {
+        "localDate": "06/16/2026 15:00",
+        "stadiumId": "11",
+        "istDate": "17 Jun 2026 • 00:30 IST"
+    },
+    "18": {
+        "localDate": "06/16/2026 18:00",
+        "stadiumId": "9",
+        "istDate": "17 Jun 2026 • 03:30 IST"
+    },
+    "19": {
+        "localDate": "06/16/2026 21:00",
+        "stadiumId": "8",
+        "istDate": "17 Jun 2026 • 06:30 IST"
+    },
+    "20": {
+        "localDate": "06/17/2026 00:00",
+        "stadiumId": "14",
+        "istDate": "17 Jun 2026 • 09:30 IST"
+    },
+    "21": {
+        "localDate": "06/17/2026 13:00",
+        "stadiumId": "16",
+        "istDate": "17 Jun 2026 • 22:30 IST"
+    },
+    "22": {
+        "localDate": "06/17/2026 16:00",
+        "stadiumId": "4",
+        "istDate": "18 Jun 2026 • 01:30 IST"
+    },
+    "23": {
+        "localDate": "06/17/2026 19:00",
+        "stadiumId": "2",
+        "istDate": "18 Jun 2026 • 04:30 IST"
+    },
+    "24": {
+        "localDate": "06/17/2026 22:00",
+        "stadiumId": "1",
+        "istDate": "18 Jun 2026 • 07:30 IST"
+    },
+    "25": {
+        "localDate": "06/18/2026 12:00",
+        "stadiumId": "10",
+        "istDate": "18 Jun 2026 • 21:30 IST"
+    },
+    "26": {
+        "localDate": "06/18/2026 15:00",
+        "stadiumId": "5",
+        "istDate": "19 Jun 2026 • 00:30 IST"
+    },
+    "27": {
+        "localDate": "06/18/2026 18:00",
+        "stadiumId": "13",
+        "istDate": "19 Jun 2026 • 03:30 IST"
+    },
+    "28": {
+        "localDate": "06/18/2026 21:00",
+        "stadiumId": "15",
+        "istDate": "19 Jun 2026 • 06:30 IST"
+    },
+    "29": {
+        "localDate": "06/19/2026 15:00",
+        "stadiumId": "12",
+        "istDate": "20 Jun 2026 • 00:30 IST"
+    },
+    "30": {
+        "localDate": "06/19/2026 18:00",
+        "stadiumId": "9",
+        "istDate": "20 Jun 2026 • 03:30 IST"
+    },
+    "31": {
+        "localDate": "06/19/2026 20:30",
+        "stadiumId": "7",
+        "istDate": "20 Jun 2026 • 06:00 IST"
+    },
+    "32": {
+        "localDate": "06/19/2026 23:00",
+        "stadiumId": "14",
+        "istDate": "20 Jun 2026 • 08:30 IST"
+    },
+    "33": {
+        "localDate": "06/20/2026 13:00",
+        "stadiumId": "16",
+        "istDate": "20 Jun 2026 • 22:30 IST"
+    },
+    "34": {
+        "localDate": "06/20/2026 16:00",
+        "stadiumId": "2",
+        "istDate": "21 Jun 2026 • 01:30 IST"
+    },
+    "35": {
+        "localDate": "06/20/2026 20:00",
+        "stadiumId": "8",
+        "istDate": "21 Jun 2026 • 05:30 IST"
+    },
+    "36": {
+        "localDate": "06/21/2026 00:00",
+        "stadiumId": "3",
+        "istDate": "21 Jun 2026 • 09:30 IST"
+    },
+    "37": {
+        "localDate": "06/21/2026 12:00",
+        "stadiumId": "10",
+        "istDate": "21 Jun 2026 • 21:30 IST"
+    },
+    "38": {
+        "localDate": "06/21/2026 15:00",
+        "stadiumId": "5",
+        "istDate": "22 Jun 2026 • 00:30 IST"
+    },
+    "39": {
+        "localDate": "06/21/2026 18:00",
+        "stadiumId": "6",
+        "istDate": "22 Jun 2026 • 03:30 IST"
+    },
+    "40": {
+        "localDate": "06/21/2026 21:00",
+        "stadiumId": "13",
+        "istDate": "22 Jun 2026 • 06:30 IST"
+    },
+    "41": {
+        "localDate": "06/22/2026 13:00",
+        "stadiumId": "4",
+        "istDate": "22 Jun 2026 • 22:30 IST"
+    },
+    "42": {
+        "localDate": "06/22/2026 17:00",
+        "stadiumId": "7",
+        "istDate": "23 Jun 2026 • 02:30 IST"
+    },
+    "43": {
+        "localDate": "06/22/2026 20:00",
+        "stadiumId": "11",
+        "istDate": "23 Jun 2026 • 05:30 IST"
+    },
+    "44": {
+        "localDate": "06/22/2026 23:00",
+        "stadiumId": "14",
+        "istDate": "23 Jun 2026 • 08:30 IST"
+    },
+    "45": {
+        "localDate": "06/23/2026 13:00",
+        "stadiumId": "16",
+        "istDate": "23 Jun 2026 • 22:30 IST"
+    },
+    "46": {
+        "localDate": "06/23/2026 16:00",
+        "stadiumId": "9",
+        "istDate": "24 Jun 2026 • 01:30 IST"
+    },
+    "47": {
+        "localDate": "06/23/2026 19:00",
+        "stadiumId": "2",
+        "istDate": "24 Jun 2026 • 04:30 IST"
+    },
+    "48": {
+        "localDate": "06/23/2026 22:00",
+        "stadiumId": "15",
+        "istDate": "24 Jun 2026 • 07:30 IST"
+    },
+    "49": {
+        "localDate": "06/24/2026 15:00",
+        "stadiumId": "13",
+        "istDate": "25 Jun 2026 • 00:30 IST"
+    },
+    "50": {
+        "localDate": "06/24/2026 15:00",
+        "stadiumId": "12",
+        "istDate": "25 Jun 2026 • 00:30 IST"
+    },
+    "51": {
+        "localDate": "06/24/2026 18:00",
+        "stadiumId": "6",
+        "istDate": "25 Jun 2026 • 03:30 IST"
+    },
+    "52": {
+        "localDate": "06/24/2026 18:00",
+        "stadiumId": "10",
+        "istDate": "25 Jun 2026 • 03:30 IST"
+    },
+    "53": {
+        "localDate": "06/24/2026 21:00",
+        "stadiumId": "1",
+        "istDate": "25 Jun 2026 • 06:30 IST"
+    },
+    "54": {
+        "localDate": "06/24/2026 21:00",
+        "stadiumId": "3",
+        "istDate": "25 Jun 2026 • 06:30 IST"
+    },
+    "55": {
+        "localDate": "06/25/2026 16:00",
+        "stadiumId": "11",
+        "istDate": "26 Jun 2026 • 01:30 IST"
+    },
+    "56": {
+        "localDate": "06/25/2026 16:00",
+        "stadiumId": "7",
+        "istDate": "26 Jun 2026 • 01:30 IST"
+    },
+    "57": {
+        "localDate": "06/25/2026 19:00",
+        "stadiumId": "8",
+        "istDate": "26 Jun 2026 • 04:30 IST"
+    },
+    "58": {
+        "localDate": "06/25/2026 19:00",
+        "stadiumId": "4",
+        "istDate": "26 Jun 2026 • 04:30 IST"
+    },
+    "59": {
+        "localDate": "06/25/2026 22:00",
+        "stadiumId": "5",
+        "istDate": "26 Jun 2026 • 07:30 IST"
+    },
+    "60": {
+        "localDate": "06/25/2026 22:00",
+        "stadiumId": "14",
+        "istDate": "26 Jun 2026 • 07:30 IST"
+    },
+    "61": {
+        "localDate": "06/26/2026 15:00",
+        "stadiumId": "9",
+        "istDate": "27 Jun 2026 • 00:30 IST"
+    },
+    "62": {
+        "localDate": "06/26/2026 15:00",
+        "stadiumId": "2",
+        "istDate": "27 Jun 2026 • 00:30 IST"
+    },
+    "63": {
+        "localDate": "06/26/2026 20:00",
+        "stadiumId": "15",
+        "istDate": "27 Jun 2026 • 05:30 IST"
+    },
+    "64": {
+        "localDate": "06/26/2026 20:00",
+        "stadiumId": "16",
+        "istDate": "27 Jun 2026 • 05:30 IST"
+    },
+    "65": {
+        "localDate": "06/26/2026 23:00",
+        "stadiumId": "13",
+        "istDate": "27 Jun 2026 • 08:30 IST"
+    },
+    "66": {
+        "localDate": "06/26/2026 23:00",
+        "stadiumId": "12",
+        "istDate": "27 Jun 2026 • 08:30 IST"
+    },
+    "67": {
+        "localDate": "06/27/2026 17:00",
+        "stadiumId": "11",
+        "istDate": "28 Jun 2026 • 02:30 IST"
+    },
+    "68": {
+        "localDate": "06/27/2026 17:00",
+        "stadiumId": "7",
+        "istDate": "28 Jun 2026 • 02:30 IST"
+    },
+    "69": {
+        "localDate": "06/27/2026 19:30",
+        "stadiumId": "6",
+        "istDate": "28 Jun 2026 • 05:00 IST"
+    },
+    "70": {
+        "localDate": "06/27/2026 19:30",
+        "stadiumId": "10",
+        "istDate": "28 Jun 2026 • 05:00 IST"
+    },
+    "71": {
+        "localDate": "06/27/2026 23:00",
+        "stadiumId": "4",
+        "istDate": "28 Jun 2026 • 08:30 IST"
+    },
+    "72": {
+        "localDate": "06/27/2026 23:00",
+        "stadiumId": "8",
+        "istDate": "28 Jun 2026 • 08:30 IST"
+    },
+    "73": {
+        "localDate": "06/28/2026 15:00",
+        "stadiumId": "5",
+        "istDate": "29 Jun 2026 • 00:30 IST"
+    },
+    "74": {
+        "localDate": "06/29/2026 16:30",
+        "stadiumId": "9",
+        "istDate": "30 Jun 2026 • 02:00 IST"
+    },
+    "75": {
+        "localDate": "06/29/2026 21:00",
+        "stadiumId": "3",
+        "istDate": "30 Jun 2026 • 06:30 IST"
+    },
+    "76": {
+        "localDate": "06/29/2026 13:00",
+        "stadiumId": "16",
+        "istDate": "29 Jun 2026 • 22:30 IST"
+    },
+    "77": {
+        "localDate": "06/30/2026 17:00",
+        "stadiumId": "11",
+        "istDate": "1 Jul 2026 • 02:30 IST"
+    },
+    "78": {
+        "localDate": "06/30/2026 13:00",
+        "stadiumId": "4",
+        "istDate": "30 Jun 2026 • 22:30 IST"
+    },
+    "79": {
+        "localDate": "06/30/2026 21:00",
+        "stadiumId": "1",
+        "istDate": "1 Jul 2026 • 06:30 IST"
+    },
+    "80": {
+        "localDate": "07/01/2026 12:00",
+        "stadiumId": "10",
+        "istDate": "1 Jul 2026 • 21:30 IST"
+    },
+    "81": {
+        "localDate": "07/01/2026 20:00",
+        "stadiumId": "14",
+        "istDate": "2 Jul 2026 • 05:30 IST"
+    },
+    "82": {
+        "localDate": "07/01/2026 16:00",
+        "stadiumId": "12",
+        "istDate": "2 Jul 2026 • 01:30 IST"
+    },
+    "83": {
+        "localDate": "07/02/2026 19:00",
+        "stadiumId": "2",
+        "istDate": "3 Jul 2026 • 04:30 IST"
+    },
+    "84": {
+        "localDate": "07/02/2026 15:00",
+        "stadiumId": "5",
+        "istDate": "3 Jul 2026 • 00:30 IST"
+    },
+    "85": {
+        "localDate": "07/02/2026 23:00",
+        "stadiumId": "13",
+        "istDate": "3 Jul 2026 • 08:30 IST"
+    },
+    "86": {
+        "localDate": "07/03/2026 18:00",
+        "stadiumId": "6",
+        "istDate": "4 Jul 2026 • 03:30 IST"
+    },
+    "87": {
+        "localDate": "07/03/2026 21:30",
+        "stadiumId": "8",
+        "istDate": "4 Jul 2026 • 07:00 IST"
+    },
+    "88": {
+        "localDate": "07/03/2026 14:00",
+        "stadiumId": "4",
+        "istDate": "3 Jul 2026 • 23:30 IST"
+    },
+    "89": {
+        "localDate": "07/04/2026 17:00",
+        "stadiumId": "7",
+        "istDate": "5 Jul 2026 • 02:30 IST"
+    },
+    "90": {
+        "localDate": "07/04/2026 13:00",
+        "stadiumId": "16",
+        "istDate": "4 Jul 2026 • 22:30 IST"
+    },
+    "91": {
+        "localDate": "07/05/2026 16:00",
+        "stadiumId": "11",
+        "istDate": "6 Jul 2026 • 01:30 IST"
+    },
+    "92": {
+        "localDate": "07/05/2026 20:00",
+        "stadiumId": "1",
+        "istDate": "6 Jul 2026 • 05:30 IST"
+    },
+    "93": {
+        "localDate": "07/06/2026 15:00",
+        "stadiumId": "4",
+        "istDate": "7 Jul 2026 • 00:30 IST"
+    },
+    "94": {
+        "localDate": "07/06/2026 20:00",
+        "stadiumId": "12",
+        "istDate": "7 Jul 2026 • 05:30 IST"
+    },
+    "95": {
+        "localDate": "07/07/2026 12:00",
+        "stadiumId": "10",
+        "istDate": "7 Jul 2026 • 21:30 IST"
+    },
+    "96": {
+        "localDate": "07/07/2026 16:00",
+        "stadiumId": "13",
+        "istDate": "8 Jul 2026 • 01:30 IST"
+    },
+    "97": {
+        "localDate": "07/09/2026 16:00",
+        "stadiumId": "9",
+        "istDate": "10 Jul 2026 • 01:30 IST"
+    },
+    "98": {
+        "localDate": "07/10/2026 15:00",
+        "stadiumId": "5",
+        "istDate": "11 Jul 2026 • 00:30 IST"
+    },
+    "99": {
+        "localDate": "07/11/2026 17:00",
+        "stadiumId": "6",
+        "istDate": "12 Jul 2026 • 02:30 IST"
+    },
+    "100": {
+        "localDate": "07/11/2026 21:00",
+        "stadiumId": "8",
+        "istDate": "12 Jul 2026 • 06:30 IST"
+    },
+    "101": {
+        "localDate": "07/14/2026 15:00",
+        "stadiumId": "4",
+        "istDate": "15 Jul 2026 • 00:30 IST"
+    },
+    "102": {
+        "localDate": "07/15/2026 15:00",
+        "stadiumId": "10",
+        "istDate": "16 Jul 2026 • 00:30 IST"
+    },
+    "103": {
+        "localDate": "07/18/2026 17:00",
+        "stadiumId": "6",
+        "istDate": "19 Jul 2026 • 02:30 IST"
+    },
+    "104": {
+        "localDate": "07/19/2026 15:00",
+        "stadiumId": "11",
+        "istDate": "20 Jul 2026 • 00:30 IST"
+    }
+};
+
 const GROUPS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'];
 
 // State object
@@ -224,51 +1398,23 @@ function initApp() {
 
 function initGroupMatches() {
     state.groupMatches = [];
-    let matchId = 1;
-
-    GROUPS.forEach(gLetter => {
-        const groupTeams = TEAMS.filter(t => t.group === gLetter);
-        
-        const pairings = [
-            { home: groupTeams[0], away: groupTeams[1] },
-            { home: groupTeams[2], away: groupTeams[3] },
-            { home: groupTeams[0], away: groupTeams[2] },
-            { home: groupTeams[1], away: groupTeams[3] },
-            { home: groupTeams[0], away: groupTeams[3] },
-            { home: groupTeams[1], away: groupTeams[2] }
-        ];
-
-        pairings.forEach(pair => {
+    OFFICIAL_GROUP_MATCHES.forEach(fixture => {
+        const homeTeam = TEAMS.find(t => t.apiId === fixture.homeApiId);
+        const awayTeam = TEAMS.find(t => t.apiId === fixture.awayApiId);
+        if (homeTeam && awayTeam) {
             state.groupMatches.push({
-                id: matchId++,
-                homeTeam: pair.home,
-                awayTeam: pair.away,
+                id: fixture.id,
+                homeTeam: homeTeam,
+                awayTeam: awayTeam,
                 score1: null,
                 score2: null,
                 finished: false,
-                group: gLetter
+                group: fixture.group
             });
-        });
-    });
-}
-
-// Generate realistic default dates and stadium IDs for unplayed games
-function initDefaultSchedules() {
-    state.matchSchedules = {};
-    for (let id = 1; id <= 104; id++) {
-        let localDate = '';
-        let stadiumId = String((id % 16) + 1);
-        
-        if (id <= 72) {
-            const dayOffset = Math.floor((id - 1) / 5);
-            localDate = `06/${11 + dayOffset}/2026 15:00`;
         } else {
-            const dayOffset = Math.floor((id - 73) / 3);
-            localDate = `06/${28 + dayOffset}/2026 17:00`;
+            console.error("Failed to find team for fixture:", fixture);
         }
-        
-        state.matchSchedules[id] = { localDate, stadiumId };
-    }
+    });
 }
 
 function updateSchedulesFromApi(gamesArray) {
@@ -284,8 +1430,19 @@ function updateSchedulesFromApi(gamesArray) {
 }
 
 // IST conversion helper
-function getISTDate(localDateStr, stadiumId) {
-    if (!localDateStr) return 'TBD';
+function getISTDate(localDateStr, stadiumId, matchId) {
+    // If we have a pre-calculated IST date in matchSchedules, return it directly!
+    if (matchId) {
+        const sched = state.matchSchedules[matchId];
+        if (sched && sched.istDate) return sched.istDate;
+    }
+    
+    // Otherwise look up in OFFICIAL_SCHEDULES if we can match by date/stadium
+    for (let id in OFFICIAL_SCHEDULES) {
+        if (OFFICIAL_SCHEDULES[id].localDate === localDateStr && OFFICIAL_SCHEDULES[id].stadiumId === stadiumId) {
+            if (OFFICIAL_SCHEDULES[id].istDate) return OFFICIAL_SCHEDULES[id].istDate;
+        }
+    }
     
     try {
         const parts = localDateStr.split(' ');
@@ -319,6 +1476,19 @@ function getISTDate(localDateStr, stadiumId) {
         return `${dayVal} ${monthVal} ${yearVal} • ${hrVal}:${minVal} IST`;
     } catch (e) {
         return localDateStr + ' IST';
+    }
+}
+
+// Initialize default schedules using official database
+function initDefaultSchedules() {
+    state.matchSchedules = {};
+    for (let id = 1; id <= 104; id++) {
+        const sched = OFFICIAL_SCHEDULES[id] || { localDate: '06/15/2026 12:00', stadiumId: '1', istDate: 'TBD' };
+        state.matchSchedules[id] = {
+            localDate: sched.localDate,
+            stadiumId: sched.stadiumId,
+            istDate: sched.istDate
+        };
     }
 }
 
@@ -1002,6 +2172,7 @@ function renderMatchesTable() {
     container.innerHTML = '';
 
     const filter = state.activeFixtureFilter;
+    const matchesByDate = new Map(); // Date string -> Array of match details
     let visibleCount = 0;
 
     for (let id = 1; id <= 104; id++) {
@@ -1016,12 +2187,12 @@ function renderMatchesTable() {
 
         if (!match) continue;
 
-        // Apply tab filters
+        // Apply filters
         if (filter === 'group' && isKnockout) continue;
         if (filter === 'knockout' && !isKnockout) continue;
         if (filter === 'live' && !match.finished) continue;
 
-        // Team names and flag setups
+        // Team info and flag setup
         const team1 = match.team1 || match.homeTeam || null;
         const team2 = match.team2 || match.awayTeam || null;
 
@@ -1036,49 +2207,95 @@ function renderMatchesTable() {
 
         // Retrieve schedule details
         const schedule = state.matchSchedules[id] || { localDate: '06/15/2026 12:00', stadiumId: '1' };
-        const istDateStr = getISTDate(schedule.localDate, schedule.stadiumId);
+        const istDateStr = getISTDate(schedule.localDate, schedule.stadiumId, id);
         
         const stadium = STADIUMS[parseInt(schedule.stadiumId)] || { name: 'TBD Stadium' };
         const venueName = stadium.name;
 
-        const card = document.createElement('div');
-        card.className = `fixture-card glass-panel ${match.finished ? 'finished' : ''}`;
+        // Split date and time
+        const dateParts = istDateStr.split(' • ');
+        const dateKey = dateParts[0]; // e.g. "11 Jun 2026" or "12 Jun 2026"
+        const timeVal = dateParts[1] || ''; // e.g. "23:30 IST"
 
-        card.innerHTML = `
-            <div class="fixture-meta">
-                <span class="match-num-badge">Match ${id}</span>
-                <span class="stage-badge">${isKnockout ? 'Knockout' : 'Group ' + match.group}</span>
-                <span class="time-badge">${istDateStr}</span>
-            </div>
-            <div class="fixture-teams-area">
-                <div class="fixture-team home">
-                    <span class="fixture-name" title="${team1Name}">${team1Name}</span>
-                    <img class="flag-img" src="${team1Flag}" alt="">
-                </div>
-                <div class="fixture-score-area">
-                    <span class="fixture-score-val">${score1}</span>
-                    <span class="fixture-score-separator">:</span>
-                    <span class="fixture-score-val">${score2}</span>
-                </div>
-                <div class="fixture-team away">
-                    <img class="flag-img" src="${team2Flag}" alt="">
-                    <span class="fixture-name" title="${team2Name}">${team2Name}</span>
-                </div>
-            </div>
-            <div class="venue-info">
-                <span class="material-symbols-outlined" style="font-size: 14px;">location_on</span>
-                <span>${venueName}</span>
-            </div>
-            ${match.finished ? '<span class="live-tag">LIVE / OFFICIAL</span>' : '<span class="pred-tag">PREDICTED</span>'}
-        `;
+        if (!matchesByDate.has(dateKey)) {
+            matchesByDate.set(dateKey, []);
+        }
 
-        container.appendChild(card);
+        matchesByDate.get(dateKey).push({
+            id,
+            match,
+            isKnockout,
+            team1Name,
+            team2Name,
+            team1Flag,
+            team2Flag,
+            score1,
+            score2,
+            timeVal,
+            venueName
+        });
         visibleCount++;
     }
 
     if (visibleCount === 0) {
-        container.innerHTML = '<div class="no-fixtures" style="grid-column: 1/-1; text-align: center; color: var(--text-dimmed); padding: 3rem;">No matches found matching this filter.</div>';
+        container.innerHTML = '<div class="no-fixtures" style="text-align: center; color: var(--text-dimmed); padding: 3rem;">No matches found matching this filter.</div>';
+        return;
     }
+
+    // Render grouped dates
+    matchesByDate.forEach((matchesList, dateStr) => {
+        const dateSection = document.createElement('div');
+        dateSection.className = 'date-section';
+
+        const title = document.createElement('div');
+        title.className = 'date-section-title';
+        title.innerHTML = `<span class="material-symbols-outlined" style="font-size: 18px; vertical-align: middle;">calendar_today</span> ${dateStr}`;
+        dateSection.appendChild(title);
+
+        const table = document.createElement('div');
+        table.className = 'horizontal-table';
+
+        matchesList.forEach(m => {
+            const row = document.createElement('div');
+            row.className = `match-table-row glass-panel ${m.match.finished ? 'finished' : ''}`;
+
+            row.innerHTML = `
+                <div class="row-header-items">
+                    <div class="match-cell num">Match ${m.id}</div>
+                    <div class="match-cell time">${m.timeVal}</div>
+                    <div class="match-cell stage">${m.isKnockout ? 'Knockout' : 'Group ' + m.match.group}</div>
+                </div>
+                <div class="row-main-items">
+                    <div class="match-cell team home">
+                        <span class="team-name" title="${m.team1Name}">${m.team1Name}</span>
+                        <img class="flag-img" src="${m.team1Flag}" alt="">
+                    </div>
+                    <div class="match-cell score">
+                        <span class="score-val">${m.score1}</span>
+                        <span class="score-sep">:</span>
+                        <span class="score-val">${m.score2}</span>
+                    </div>
+                    <div class="match-cell team away">
+                        <img class="flag-img" src="${m.team2Flag}" alt="">
+                        <span class="team-name" title="${m.team2Name}">${m.team2Name}</span>
+                    </div>
+                </div>
+                <div class="row-footer-items">
+                    <div class="match-cell venue">
+                        <span class="material-symbols-outlined" style="font-size: 14px; color: var(--text-dimmed);">location_on</span>
+                        <span>${m.venueName}</span>
+                    </div>
+                    <div class="match-cell status">
+                        ${m.match.finished ? '<span class="live-badge-small">Live</span>' : '<span class="pred-badge-small">Predicted</span>'}
+                    </div>
+                </div>
+            `;
+            table.appendChild(row);
+        });
+
+        dateSection.appendChild(table);
+        container.appendChild(dateSection);
+    });
 }
 
 function filterFixtures(filterType) {
