@@ -1279,7 +1279,9 @@ let state = {
     knockouts: {},      // Map of Match ID -> match state
     activeTabs: {},      // Map of Group letter -> 'standings' | 'matches'
     activeFixtureFilter: 'all', // 'all' | 'group' | 'knockout' | 'live'
-    matchSchedules: {}   // Map of Match ID -> { localDate, stadiumId }
+    matchSchedules: {},  // Map of Match ID -> { localDate, stadiumId }
+    apiKnockoutTeams: {}, // Map of Match ID -> { team1, team2 } from live API
+    isCustomPredictionMode: false // Flag indicating if user has customized group stage predictions
 };
 
 // Knockout Match Configurations
@@ -1364,6 +1366,8 @@ function initApp() {
             if (parsed.groupMatches && parsed.knockouts) {
                 state.groupMatches = parsed.groupMatches;
                 state.knockouts = parsed.knockouts;
+                state.apiKnockoutTeams = parsed.apiKnockoutTeams || {};
+                state.isCustomPredictionMode = parsed.isCustomPredictionMode || false;
             }
         } catch (e) {
             console.error("Failed to parse prediction cache.", e);
@@ -1569,26 +1573,36 @@ function mergeLiveData(gamesArray) {
         } else {
             const mId = parseInt(game.id);
             const localKnockout = state.knockouts[mId];
-            if (localKnockout && isFinished) {
+            if (localKnockout) {
                 const homeId = parseInt(game.home_team_id);
                 const awayId = parseInt(game.away_team_id);
                 
-                const team1Obj = TEAMS.find(t => t.apiId === homeId);
-                const team2Obj = TEAMS.find(t => t.apiId === awayId);
+                if (homeId > 0 && awayId > 0) {
+                    const team1Obj = TEAMS.find(t => t.apiId === homeId);
+                    const team2Obj = TEAMS.find(t => t.apiId === awayId);
 
-                if (team1Obj && team2Obj) {
-                    localKnockout.team1 = team1Obj;
-                    localKnockout.team2 = team2Obj;
-                    localKnockout.score1 = parseInt(game.home_score);
-                    localKnockout.score2 = parseInt(game.away_score);
-                    localKnockout.finished = true;
-                    
-                    if (localKnockout.score1 > localKnockout.score2) {
-                        localKnockout.winner = team1Obj;
-                        localKnockout.loser = team2Obj;
-                    } else {
-                        localKnockout.winner = team2Obj;
-                        localKnockout.loser = team1Obj;
+                    if (team1Obj && team2Obj) {
+                        // Store the official teams set by the API
+                        state.apiKnockoutTeams[mId] = {
+                            team1: team1Obj,
+                            team2: team2Obj
+                        };
+
+                        if (isFinished) {
+                            localKnockout.team1 = team1Obj;
+                            localKnockout.team2 = team2Obj;
+                            localKnockout.score1 = parseInt(game.home_score);
+                            localKnockout.score2 = parseInt(game.away_score);
+                            localKnockout.finished = true;
+                            
+                            if (localKnockout.score1 > localKnockout.score2) {
+                                localKnockout.winner = team1Obj;
+                                localKnockout.loser = team2Obj;
+                            } else {
+                                localKnockout.winner = team2Obj;
+                                localKnockout.loser = team1Obj;
+                            }
+                        }
                     }
                 }
             }
@@ -1600,7 +1614,9 @@ function mergeLiveData(gamesArray) {
 function saveState() {
     localStorage.setItem('wc_2026_predictor_state', JSON.stringify({
         groupMatches: state.groupMatches,
-        knockouts: state.knockouts
+        knockouts: state.knockouts,
+        apiKnockoutTeams: state.apiKnockoutTeams,
+        isCustomPredictionMode: state.isCustomPredictionMode
     }));
 }
 
@@ -1609,6 +1625,8 @@ function resetToDefault() {
     localStorage.removeItem('wc_2026_live_cache');
     state.groupMatches = [];
     state.knockouts = {};
+    state.apiKnockoutTeams = {};
+    state.isCustomPredictionMode = false;
     initApp();
 }
 
@@ -1794,6 +1812,8 @@ window.updateMatchScore = function(matchId, isHome, val) {
     const match = state.groupMatches.find(m => m.id === matchId);
     if (!match || match.finished) return;
 
+    state.isCustomPredictionMode = true; // Mark as custom prediction mode
+
     const parsedVal = val === '' ? null : parseInt(val);
     if (isHome) {
         match.score1 = parsedVal;
@@ -1856,7 +1876,57 @@ function calculateWildcards() {
 
 // 5. Populate Round of 32 (with Auto-Advancement to R16)
 function populateRound32() {
-    const assignedWildcards = new Set();
+    // Clear all R32 unplayed wildcard slots first in knockouts state
+    Object.keys(MATCH_CONFIGS).forEach(matchId => {
+        matchId = parseInt(matchId);
+        const config = MATCH_CONFIGS[matchId];
+        if (config.round !== 'R32') return;
+        const currentMatch = state.knockouts[matchId];
+        if (!currentMatch.finished) {
+            currentMatch.team1 = null;
+            currentMatch.team2 = null;
+            resetMatchWinner(matchId);
+        }
+    });
+
+    // Get the top 8 qualified wildcards
+    const qualifiedWildcards = state.wildcards.slice(0, 8);
+    const wildcardMatches = [74, 77, 79, 80, 81, 82, 85, 87];
+
+    const assignment = {}; // matchId -> team
+    const usedWildcardIds = new Set();
+
+    // Use backtracking to find a valid assignment where each wildcard team goes to a match where its group is eligible
+    function backtrack(matchIdx) {
+        if (matchIdx === wildcardMatches.length) {
+            return true;
+        }
+
+        const matchId = wildcardMatches[matchIdx];
+        const config = MATCH_CONFIGS[matchId];
+        const eligible = config.team2Src.eligibleGroups;
+
+        for (let i = 0; i < qualifiedWildcards.length; i++) {
+            const team = qualifiedWildcards[i];
+            if (!usedWildcardIds.has(team.id) && eligible.includes(team.group)) {
+                assignment[matchId] = team;
+                usedWildcardIds.add(team.id);
+
+                if (backtrack(matchIdx + 1)) {
+                    return true;
+                }
+
+                delete assignment[matchId];
+                usedWildcardIds.delete(team.id);
+            }
+        }
+        return false;
+    }
+
+    const success = backtrack(0);
+    const fallbackUsed = new Set();
+
+    const useApiTeams = !state.isCustomPredictionMode && Object.keys(state.apiKnockoutTeams).length > 0;
 
     Object.keys(MATCH_CONFIGS).forEach(matchId => {
         matchId = parseInt(matchId);
@@ -1866,28 +1936,37 @@ function populateRound32() {
         let team1 = null;
         let team2 = null;
 
-        if (config.team1Src.type === 'group-winner') {
-            team1 = state.groupStandings[config.team1Src.group][0];
-        } else if (config.team1Src.type === 'group-runner-up') {
-            team1 = state.groupStandings[config.team1Src.group][1];
-        }
+        if (useApiTeams && state.apiKnockoutTeams[matchId]) {
+            team1 = state.apiKnockoutTeams[matchId].team1;
+            team2 = state.apiKnockoutTeams[matchId].team2;
+        } else {
+            if (config.team1Src.type === 'group-winner') {
+                team1 = state.groupStandings[config.team1Src.group][0];
+            } else if (config.team1Src.type === 'group-runner-up') {
+                team1 = state.groupStandings[config.team1Src.group][1];
+            }
 
-        if (config.team2Src.type === 'group-winner') {
-            team2 = state.groupStandings[config.team2Src.group][0];
-        } else if (config.team2Src.type === 'group-runner-up') {
-            team2 = state.groupStandings[config.team2Src.group][1];
-        } else if (config.team2Src.type === 'wildcard') {
-            const eligible = config.team2Src.eligibleGroups;
-            const matchWildcard = state.wildcards.find(w => eligible.includes(w.group) && !assignedWildcards.has(w.id));
-
-            if (matchWildcard) {
-                team2 = matchWildcard;
-                assignedWildcards.add(matchWildcard.id);
-            } else {
-                const fallbackWildcard = state.wildcards.find(w => !assignedWildcards.has(w.id));
-                if (fallbackWildcard) {
-                    team2 = fallbackWildcard;
-                    assignedWildcards.add(fallbackWildcard.id);
+            if (config.team2Src.type === 'group-winner') {
+                team2 = state.groupStandings[config.team2Src.group][0];
+            } else if (config.team2Src.type === 'group-runner-up') {
+                team2 = state.groupStandings[config.team2Src.group][1];
+            } else if (config.team2Src.type === 'wildcard') {
+                if (success) {
+                    team2 = assignment[matchId] || null;
+                } else {
+                    // Fallback to greedy if backtracking fails
+                    const eligible = config.team2Src.eligibleGroups;
+                    const matchWildcard = qualifiedWildcards.find(w => eligible.includes(w.group) && !fallbackUsed.has(w.id));
+                    if (matchWildcard) {
+                        team2 = matchWildcard;
+                        fallbackUsed.add(matchWildcard.id);
+                    } else {
+                        const fallbackWildcard = qualifiedWildcards.find(w => !fallbackUsed.has(w.id));
+                        if (fallbackWildcard) {
+                            team2 = fallbackWildcard;
+                            fallbackUsed.add(fallbackWildcard.id);
+                        }
+                    }
                 }
             }
         }
@@ -2014,11 +2093,11 @@ function updateAllViews() {
 // 6. Render Knockout Bracket
 function renderKnockoutBracket() {
     const listMap = {
-        'left-r32': [73, 74, 75, 77, 81, 82, 83, 84],
+        'left-r32': [74, 77, 73, 75, 83, 84, 81, 82],
         'left-r16': [89, 90, 93, 94],
         'left-qf': [97, 98],
         'left-sf': [101],
-        'right-r32': [76, 78, 79, 80, 85, 86, 87, 88],
+        'right-r32': [76, 78, 79, 80, 86, 88, 85, 87],
         'right-r16': [91, 92, 95, 96],
         'right-qf': [99, 100],
         'right-sf': [102]
@@ -2070,7 +2149,11 @@ function buildMatchCardContent(matchId) {
         liveBadgeHTML = '<span class="match-status-badge">Live</span>';
     }
     
-    meta.innerHTML = `<span>Match ${matchId} ${liveBadgeHTML}</span><span>${config.venue}</span>`;
+    const schedule = state.matchSchedules[matchId] || { localDate: 'TBD', stadiumId: '1' };
+    const stadium = STADIUMS[parseInt(schedule.stadiumId)] || { name: config.venue || 'TBD Stadium' };
+    const venueName = stadium.name.split(' (')[0];
+    
+    meta.innerHTML = `<span>Match ${matchId} ${liveBadgeHTML}</span><span>${venueName}</span>`;
     fragment.appendChild(meta);
 
     const buildTeamRow = (team, isTeam1) => {
@@ -2165,15 +2248,40 @@ function checkChampion() {
     }
 }
 
-// 7. Render 'Match Table' Section (All 104 matches in IST with Venues)
+// Helper to get UTC timestamp from match local schedule (for sorting)
+function getMatchTimestamp(matchId) {
+    const schedule = state.matchSchedules[matchId];
+    if (!schedule) return 0;
+    try {
+        const parts = schedule.localDate.split(' ');
+        const dateParts = parts[0].split('/');
+        const timeParts = parts[1].split(':');
+        
+        const month = parseInt(dateParts[0]) - 1;
+        const day = parseInt(dateParts[1]);
+        const year = parseInt(dateParts[2]);
+        const hour = parseInt(timeParts[0]);
+        const minute = parseInt(timeParts[1]);
+        
+        const localTimeMs = Date.UTC(year, month, day, hour, minute);
+        const stadium = STADIUMS[parseInt(schedule.stadiumId)] || { offset: -5 };
+        const offsetHours = stadium.offset;
+        
+        const utcTimeMs = localTimeMs - (offsetHours * 60 * 60 * 1000);
+        return utcTimeMs;
+    } catch (e) {
+        return 0;
+    }
+}
+
+// 7. Render 'Match Table' Section (All 104 matches sorted chronologically in IST with Venues)
 function renderMatchesTable() {
     const container = document.getElementById('fixtures-grid-container');
     if (!container) return;
     container.innerHTML = '';
 
     const filter = state.activeFixtureFilter;
-    const matchesByDate = new Map(); // Date string -> Array of match details
-    let visibleCount = 0;
+    const visibleMatches = [];
 
     for (let id = 1; id <= 104; id++) {
         let match = null;
@@ -2217,11 +2325,9 @@ function renderMatchesTable() {
         const dateKey = dateParts[0]; // e.g. "11 Jun 2026" or "12 Jun 2026"
         const timeVal = dateParts[1] || ''; // e.g. "23:30 IST"
 
-        if (!matchesByDate.has(dateKey)) {
-            matchesByDate.set(dateKey, []);
-        }
+        const timestamp = getMatchTimestamp(id);
 
-        matchesByDate.get(dateKey).push({
+        visibleMatches.push({
             id,
             match,
             isKnockout,
@@ -2231,16 +2337,29 @@ function renderMatchesTable() {
             team2Flag,
             score1,
             score2,
+            dateKey,
             timeVal,
-            venueName
+            venueName,
+            timestamp
         });
-        visibleCount++;
     }
 
-    if (visibleCount === 0) {
+    if (visibleMatches.length === 0) {
         container.innerHTML = '<div class="no-fixtures" style="text-align: center; color: var(--text-dimmed); padding: 3rem;">No matches found matching this filter.</div>';
         return;
     }
+
+    // Sort visible matches chronologically by timestamp
+    visibleMatches.sort((a, b) => a.timestamp - b.timestamp);
+
+    // Group sorted matches by dateKey
+    const matchesByDate = new Map();
+    visibleMatches.forEach(m => {
+        if (!matchesByDate.has(m.dateKey)) {
+            matchesByDate.set(m.dateKey, []);
+        }
+        matchesByDate.get(m.dateKey).push(m);
+    });
 
     // Render grouped dates
     matchesByDate.forEach((matchesList, dateStr) => {
@@ -2322,6 +2441,8 @@ function filterFixtures(filterType) {
 
 // 8. Auto-Simulation Engine
 window.simSingleGroup = function(gLetter) {
+    state.isCustomPredictionMode = true; // Mark as custom prediction mode
+
     const matches = state.groupMatches.filter(m => m.group === gLetter);
 
     matches.forEach(match => {
