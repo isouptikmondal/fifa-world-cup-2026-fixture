@@ -1,5 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
+﻿<!DOCTYPE html>
+<html lang="en-IN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,7 +22,7 @@
                 <span class="material-symbols-outlined trophy-icon">trophy</span>
                 <div class="title-meta">
                     <h1>FIFA WORLD CUP 2026</h1>
-                    <p class="subtitle">Interactive Predictor & Bracket</p>
+                    <p class="subtitle">Official IST Fixtures & Predictor</p>
                 </div>
                 <div class="live-status-container">
                     <span id="live-indicator" class="live-indicator offline"></span>
@@ -48,9 +48,9 @@
                 </div>
                 
                 <div class="action-buttons">
-                    <button id="btn-sync-live" class="action-btn secondary" title="Fetch live scores from API">
+                    <button id="btn-sync-live" class="action-btn secondary" title="Refresh fixtures and results from FIFA">
                         <span class="material-symbols-outlined">sync</span>
-                        <span>Sync Live</span>
+                        <span>Sync FIFA</span>
                     </button>
                     <button id="btn-sim-groups" class="action-btn secondary" title="Simulate all group stage matches">
                         <span class="material-symbols-outlined">casino</span>
@@ -79,7 +79,7 @@
             <section id="group-stage-view" class="view-section active">
                 <div class="view-header">
                     <h2>Group Stage Standings</h2>
-                    <p>Rearrange teams using the arrows (▲/▼) to change standings. The top 2 of each group plus the 8 best 3rd-placed teams will qualify.</p>
+                    <p>Rearrange teams using the arrows (â–²/â–¼) to change standings. The top 2 of each group plus the 8 best 3rd-placed teams will qualify.</p>
                 </div>
                 
                 <div class="group-grid" id="group-grid-container">
@@ -211,12 +211,12 @@
             <section id="matches-view" class="view-section">
                 <div class="view-header">
                     <h2>Match Table</h2>
-                    <p>All 104 fixtures of the FIFA World Cup 2026, converted to Indian Standard Time (IST).</p>
+                    <p>All 104 fixtures in Indian Standard Time (IST), synced from <a class="source-link" href="https://www.fifa.com/en/tournaments/mens/worldcup/canadamexicousa2026/scores-fixtures?country=IN&amp;wtw-filter=ALL" target="_blank" rel="noopener noreferrer">FIFA.com</a>.</p>
                     <div class="fixture-filters">
                         <button class="filter-btn active" id="filter-all">All Matches</button>
                         <button class="filter-btn" id="filter-group">Group Stage</button>
                         <button class="filter-btn" id="filter-knockout">Knockout Stage</button>
-                        <button class="filter-btn" id="filter-live">Live / Official</button>
+                        <button class="filter-btn" id="filter-live">Live / Results</button>
                     </div>
                 </div>
                 
@@ -228,7 +228,7 @@
         
         <!-- Footer -->
         <footer class="app-footer">
-            <p>&copy; Souphics / isouptikmondal / 2026 FIFA World Cup Bracket Predictor.</p>
+            <p>&copy; Souphics / isouptikmondal / 2026 FIFA World Cup Bracket Predictor. Fixture data: FIFA.</p>
         </footer>
     </div>
 
@@ -252,6 +252,8 @@
         </div>
     </div>
 
+    <script src="official-fixtures.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
+

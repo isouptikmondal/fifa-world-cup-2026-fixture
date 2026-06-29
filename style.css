@@ -1,4 +1,4 @@
-/* --- FIFA World Cup 2026 Sleek Theme CSS --- */
+﻿/* --- FIFA World Cup 2026 Sleek Theme CSS --- */
 
 :root {
     /* Color Palette */
@@ -1469,7 +1469,7 @@ body {
     justify-content: flex-end;
 }
 
-.live-badge-small, .pred-badge-small {
+.live-badge-small, .final-badge-small, .pred-badge-small, .scheduled-badge-small {
     font-size: 0.65rem;
     font-weight: 800;
     padding: 0.2rem 0.5rem;
@@ -1483,10 +1483,28 @@ body {
     border: 1px solid rgba(46, 204, 113, 0.25);
 }
 
-.pred-badge-small {
+.final-badge-small {
+    background: rgba(46, 204, 113, 0.1);
+    color: var(--success);
+    border: 1px solid rgba(46, 204, 113, 0.25);
+}
+
+.pred-badge-small,
+.scheduled-badge-small {
     background: rgba(255, 255, 255, 0.05);
     color: var(--text-dimmed);
     border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.source-link {
+    color: var(--primary);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.source-link:hover,
+.source-link:focus-visible {
+    text-decoration: underline;
 }
 
 /* Adjustments for mobile view */
@@ -1607,3 +1625,4 @@ body {
         width: 23%; /* Tighter margins on 4 columns */
     }
 }
+
